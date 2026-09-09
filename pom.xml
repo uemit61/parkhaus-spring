@@ -13,6 +13,13 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>parkhaus-spring</name>
 	<description>Parkhausverwaltung mit Spring Boot, JPA und MySQL</description>
+	<licenses>
+		<license>
+			<name>Alle Rechte vorbehalten / All rights reserved</name>
+			<url>https://github.com/uemit61/parkhaus-spring/blob/main/LICENSE</url>
+			<distribution>manual</distribution>
+		</license>
+	</licenses>
 	<properties>
 		<java.version>21</java.version>
 	</properties>
@@ -40,6 +47,20 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<!-- Der Starter bringt flyway-core UND spring-boot-flyway mit. Letzteres
+		     enthaelt die Auto-Konfiguration; seit Boot 4 steckt sie nicht mehr
+		     in spring-boot-autoconfigure. Ohne den Starter liegt Flyway zwar
+		     im Klassenpfad, wird aber nie ausgefuehrt. -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-flyway</artifactId>
+		</dependency>
+		<!-- Die MySQL-Unterstuetzung liegt seit Flyway 9 in einem eigenen Modul. -->
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-mysql</artifactId>
 		</dependency>
 	</dependencies>
 
