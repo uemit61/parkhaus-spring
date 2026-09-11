@@ -50,14 +50,14 @@
 		</dependency>
 
 		<!-- Der Starter bringt flyway-core UND spring-boot-flyway mit. Letzteres
-		     enthaelt die Auto-Konfiguration; seit Boot 4 steckt sie nicht mehr
+		     enthält die Auto-Konfiguration; seit Boot 4 steckt sie nicht mehr
 		     in spring-boot-autoconfigure. Ohne den Starter liegt Flyway zwar
-		     im Klassenpfad, wird aber nie ausgefuehrt. -->
+		     im Klassenpfad, wird aber nie ausgeführt. -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-flyway</artifactId>
 		</dependency>
-		<!-- Die MySQL-Unterstuetzung liegt seit Flyway 9 in einem eigenen Modul. -->
+		<!-- Die MySQL-Unterstützung liegt seit Flyway 9 in einem eigenen Modul. -->
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-mysql</artifactId>
