@@ -31,3 +31,12 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Vorbereitet fuer v2.0, in v1.0 bewusst ausgeschlossen ###
+# Die Meldungstexte gehoeren zur Bean Validation an den DTOs. Die gibt es erst
+# mit der REST-Schnittstelle; bis dahin waere die Datei unbenutzter Ballast.
+#
+# ACHTUNG beim Wiederanschalten: Ignorierte Dateien uebergeht "git add"
+# STILLSCHWEIGEND, ohne Fehlermeldung. Wer die Datei in v2.0 einchecken will,
+# muss zuerst diese Zeile entfernen - sonst sucht er lange.
+/src/main/resources/ValidationMessages.properties
