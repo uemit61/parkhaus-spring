@@ -16,8 +16,6 @@ import jakarta.persistence.Id;
 @Entity
 public class Parketage
 {
-
-
     @Id
     private int etageNr;
 
@@ -25,11 +23,7 @@ public class Parketage
     private int anzahlPlaetze;
 
     //Konstruktoren
-    public Parketage()
-    {
-    }
-
-
+    public Parketage() {}
 
     public Parketage(int etageNr, int anzahlPlaetze)
     {
