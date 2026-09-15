@@ -3,6 +3,7 @@ package de.yildirim.parkhaus.model.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
+
 /**
  * Ein registriertes Fahrzeug der Tabelle {@code fahrzeug}: Kennzeichen und Typ.
  *
