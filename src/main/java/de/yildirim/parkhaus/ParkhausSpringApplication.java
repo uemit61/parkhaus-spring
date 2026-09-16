@@ -17,10 +17,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @copyright   Copyright (c) 2026 Ümit Yildirim. Alle Rechte vorbehalten.
  * @license     Diese Datei darf nicht ohne Zustimmung des Autors weitergegeben oder verändert werden.
  */
+
 @SpringBootApplication
 public class ParkhausSpringApplication
 {
-
 	public static void main(String[] args)
 	{
 		SpringApplication app = new SpringApplication(ParkhausSpringApplication.class);
@@ -31,7 +31,6 @@ public class ParkhausSpringApplication
 		// das Feld ganz am Anfang von run() aus, bevor die application.properties
 		// gebunden werden. Deshalb wirkt hier keine Eigenschaft, nur der Setter.
 		app.setHeadless(false);
-
 		app.run(args);
 	}
 
