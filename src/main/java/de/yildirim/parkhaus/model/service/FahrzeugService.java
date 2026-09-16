@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,7 +37,7 @@ public class FahrzeugService
     // Deutsches Kennzeichen: 1-3 Buchstaben, Bindestrich, 1-2 Buchstaben,
     // Leerzeichen, 2-5 Ziffern ohne führende Null. Einmal beim Laden der Klasse
     // übersetzt, nicht bei jedem Aufruf - deshalb static final.
-    private static final Pattern KENNZEICHEN = Pattern.compile("[A-Z]{1,3}-[A-Z]{1,2}\\s[1-9][0-9]{1,4}");
+    private static final Pattern KENNZEICHEN = Pattern.compile("[A-ZÄÖÜ]{1,3}-[A-Z]{1,2}\\s[1-9][0-9]{0,3}");
     private final FahrzeugRepository fahrzeugRepository;
     private final GarageRepository garageRepository;
     private final PropertyChangeHandle pch;
@@ -70,7 +71,7 @@ public class FahrzeugService
     @Transactional
     public boolean fahrzeugRegistrieren(String nummernschild, String typ, boolean admin)
     {
-        nummernschild = nummernschild.toUpperCase();
+        nummernschild = nummernschild.toUpperCase(Locale.ROOT);
         String[] props = new String[2];
         props[0] = nummernschild;
         props[1] = typ;
@@ -129,7 +130,7 @@ public class FahrzeugService
     @Transactional
     public void loescheFahrzeug(String nummernschild, String typ)
     {
-        nummernschild = nummernschild.toUpperCase();
+        nummernschild = nummernschild.toUpperCase(Locale.ROOT);
         if (FahrzeugService.istGueltigesKennzeichen(nummernschild))
         {
             String[] props = new String[2];
@@ -176,7 +177,7 @@ public class FahrzeugService
     {
         boolean retVal = false;
 
-        Matcher m = KENNZEICHEN.matcher(nummernschild.toUpperCase());
+        Matcher m = KENNZEICHEN.matcher(nummernschild.toUpperCase(Locale.ROOT));
 
         if (m.matches() && !nummernschild.isEmpty())
             retVal = true;
