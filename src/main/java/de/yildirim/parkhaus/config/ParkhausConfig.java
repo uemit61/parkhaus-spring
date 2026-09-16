@@ -7,6 +7,7 @@ import de.yildirim.parkhaus.view.ViewParkhaus;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import java.awt.EventQueue;
 import java.beans.PropertyChangeSupport;
@@ -44,6 +45,7 @@ public class ParkhausConfig
      * @param controller Bindeglied zwischen Oberfläche und Fachschicht
      * @return der Startvorgang, den Spring am Ende des Hochfahrens ausführt
      */
+    @Profile("!test")
     @Bean
     CommandLineRunner starteOberflaeche(Controller controller)
     {
