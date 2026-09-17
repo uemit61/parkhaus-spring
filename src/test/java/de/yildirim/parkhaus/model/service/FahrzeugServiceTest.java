@@ -1,6 +1,7 @@
 //Das ist der Punkt, der verwirrt: src/main/java und src/test/java
 // sind getrennte Verzeichnisse aber das Paket bestimmt die package-Zeile,
-// nicht der Ordner.nd legt beim Testen beide auf den Klassenpfad. Die JVM
+// nicht der Ordner.Maven übersetzt beide Bäume getrennt und
+// legt beim Testen beide auf den Klassenpfad. Die JVM
 // sieht dann einen einzigen Namensraum, und in de.yildirim.parkhaus.model.service
 // liegen FahrzeugService (aus target/classes) und FahrzeugServiceTest (aus target/test-classes)
 // einträchtig nebeneinander.
