@@ -94,7 +94,11 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<!--suppress UnresolvedMavenProperty -->
-					<argLine>-javaagent:${org.mockito:mockito-core:jar}</argLine>
+					<!-- -Xshare:off: Ein Java-Agent erweitert den Bootstrap-Klassenpfad,
+					     dadurch schaltet die JVM Class Data Sharing ohnehin ab und meldet
+					     das bei jedem Lauf. Der Schalter ändert nichts am Verhalten - er
+					     sagt nur, dass es beabsichtigt ist, und nimmt die Meldung heraus. -->
+					<argLine>-javaagent:${org.mockito:mockito-core:jar} -Xshare:off</argLine>
 				</configuration>
 			</plugin>
 		</plugins>
