@@ -23,7 +23,7 @@ public interface FahrzeugRepository extends JpaRepository<Fahrzeug, String>
     /**
      * Löscht ein Fahrzeug, wenn Kennzeichen und Typ zusammenpassen.
      *
-     * <p>Das geerbte {@code deleteById} wäre hier zu grob: es kennt den Typ nicht
+     * <p>Das geerbte {@code deleteById} wäre hier zu grob: Es kennt den Typ nicht
      * und gibt ausserdem {@code void} zurück — ob etwas gelöscht wurde, bliebe
      * unbekannt. Es ist bei einer fehlenden Zeile stillschweigend wirkungslos.
      *
