@@ -28,10 +28,10 @@ import java.beans.PropertyChangeListener;
 @Component
 public class Controller
 {
-    private FahrzeugService fahrzeugService = null;
-    private ParketageService parketageService = null;
-    private GarageService modelGarage = null;
-    private PropertyChangeHandle pch;
+    private final FahrzeugService fahrzeugService;
+    private final ParketageService parketageService;
+    private final GarageService modelGarage;
+    private final PropertyChangeHandle pch;
 
     //Constructor
 
