@@ -54,14 +54,21 @@ public class Garage
         return String.format("Garage[%s,%d,%d]", fahrzeug.getNummernschild(), parketage.getEtageNr(), platzNr);
     }
 
+    @Override
+    public int hashCode()
+    {
+        return Integer.hashCode(getPlatzNr());
+    }
+
+    @Override
+    public boolean equals(Object g)
+    {
+        return g instanceof Garage garage && (getPlatzNr() == garage.getPlatzNr());
+    }
+
     public int getPlatzNr()
     {
         return platzNr;
-    }
-
-    public void setPlatzNr(int platzNr)
-    {
-        this.platzNr = platzNr;
     }
 
     public Parketage getParketage()
@@ -72,7 +79,7 @@ public class Garage
     /**
      * Liefert die Etagennummer als flachen Wert.
      *
-     * <p>Der ungewöhnliche Name ist Absicht: das per Reflection arbeitende
+     * <p>Der ungewöhnliche Name ist Absicht: Das per Reflection arbeitende
      * TableModel sucht seine Getter über die Spaltennamen. Ein Setter dazu wäre
      * gefährlich — er würde den Primärschlüssel einer fremden Entität ändern.
      *
@@ -83,17 +90,11 @@ public class Garage
         return getParketage().getEtageNr();
     }
 
-    public void setParketage(Parketage parketage)
-    {
-        this.parketage = parketage;
-    }
 
     public Fahrzeug getFahrzeug()
     {
         return fahrzeug;
     }
-
-    public void setFahrzeug(Fahrzeug fahrzeug){this.fahrzeug =fahrzeug;}
 
     public String getFahrzeug_nummernschild()
     {

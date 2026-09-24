@@ -37,14 +37,21 @@ public class Parketage
         return String.format("Parketage: %d", etageNr);
     }
 
+    @Override
+    public int hashCode()
+    {
+        return Integer.hashCode(getEtageNr());
+    }
+
+    @Override
+    public boolean equals(Object p)
+    {
+        return p instanceof Parketage parketage && (getEtageNr() == parketage.getEtageNr());
+    }
+
     public int getEtageNr()
     {
         return etageNr;
-    }
-
-    public void setEtageNr(int etageNr)
-    {
-        this.etageNr = etageNr;
     }
 
     public int getAnzahlPlaetze()
@@ -52,8 +59,4 @@ public class Parketage
         return anzahlPlaetze;
     }
 
-    public void setAnzahlPlaetze(int anzahlPlaetze)
-    {
-        this.anzahlPlaetze = anzahlPlaetze;
-    }
 }
