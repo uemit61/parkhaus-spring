@@ -89,6 +89,12 @@ public class GarageService
                 List<Integer> platzNrListe = garageRepository.findAll(Sort.by("platzNr")).stream().map(Garage::getPlatzNr).toList();
                 // Die Liste der Platznummern wird durchlaufen, die erste freie Platznummer, wird ausgewählt.
                 int i = 1; // i entspricht PlatzNr
+                // "value == i" vergleicht Zahlen und nicht Referenzen - aber nur, weil i ein
+                // int ist: dadurch wird value ausgepackt. Würde i zu Integer, stünden dort
+                // zwei Referenzen, und der Vergleich ginge bis 127 gut, weil der Integer-Cache
+                // für kleine Werte dieselbe Instanz liefert. Ab Platz 128 wären es zwei
+                // Objekte, die gleich sind, aber nicht dasselbe - bei 260 Plätzen also mitten
+                // im Betrieb. Kompiliert sauber, tut etwas anderes.
                 for (Integer value : platzNrListe)
                 {
                     if (value == i)
