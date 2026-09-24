@@ -73,7 +73,7 @@ public class ViewParkhaus implements PropertyChangeListener
 		frame.getContentPane().setLayout(null);
 		frame.setVisible(true);
 		
-		JLabel lblUeberschrift = new JLabel("Parkhaus Simulator 2.0");
+		JLabel lblUeberschrift = new JLabel("Parkhaus Simulator");
 		lblUeberschrift.setFont(new Font("Tahoma", Font.BOLD, 18));
 		lblUeberschrift.setBounds(290, 30, 220, 20);
 		frame.getContentPane().add(lblUeberschrift);
