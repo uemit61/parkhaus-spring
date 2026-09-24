@@ -32,7 +32,7 @@ public interface FahrzeugRepository extends JpaRepository<Fahrzeug, String>
      * @return Anzahl der gelöschten Zeilen; {@code 0}, wenn die Kombination so
      *         nicht vorhanden war
      */
-    long deleteByNummernschildAndTyp(String nummernschild, String typ);
+    int deleteByNummernschildAndTyp(String nummernschild, String typ);
 
     /**
      * Prüft, ob genau dieses Fahrzeug mit genau diesem Typ registriert ist.
