@@ -35,8 +35,8 @@ import java.util.regex.Pattern;
 public class FahrzeugService
 {
     // Deutsches Kennzeichen: 1-3 Buchstaben, Bindestrich, 1-2 Buchstaben,
-    // Leerzeichen, 2-5 Ziffern ohne führende Null. Einmal beim Laden der Klasse
-    // übersetzt, nicht bei jedem Aufruf - deshalb static final.
+    // Leerzeichen, 1-4 Ziffern ohne führende Null.
+    // Einmal beim Laden der Klasse übersetzt, nicht bei jedem Aufruf - deshalb static final.
     private static final Pattern KENNZEICHEN = Pattern.compile("[A-ZÄÖÜ]{1,3}-[A-Z]{1,2}\\s[1-9][0-9]{0,3}");
     private final FahrzeugRepository fahrzeugRepository;
     private final GarageRepository garageRepository;
@@ -161,7 +161,7 @@ public class FahrzeugService
 
     /**
      * Prüft das Kennzeichen gegen das deutsche Format: ein bis drei Buchstaben,
-     * Bindestrich, ein bis zwei Buchstaben, Leerzeichen, zwei bis fünf Ziffern ohne
+     * Bindestrich, ein bis zwei Buchstaben, Leerzeichen, ein bis vier Ziffern ohne
      * führende Null (siehe {@code KENNZEICHEN}).
      *
      * <p>Die Methode prüft nur und meldet nichts — "FailCheck" schickt der
@@ -179,7 +179,7 @@ public class FahrzeugService
 
         Matcher m = KENNZEICHEN.matcher(nummernschild.toUpperCase(Locale.ROOT));
 
-        if (m.matches() && !nummernschild.isEmpty())
+        if (m.matches())
             retVal = true;
 
         return retVal;
