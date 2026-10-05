@@ -133,7 +133,7 @@ public class GarageService
                     // erst nachgeschlagen werden - das Objekt liegt schon vor.
                     garageRepository.save(new Garage(i, gefundeneEtage, fahrzeugRepository.getReferenceById(nummernschild)));
 
-                    List<Object> viewInfo = new ArrayList<>(Arrays.asList(typ, nummernschild, "" + gefundeneEtage.getEtageNr(), "" + i));
+                    List<Object> viewInfo = new ArrayList<>(Arrays.asList(typ, nummernschild, gefundeneEtage.getEtageNr(),i));
                     pch.propertyChange("ZeigePos", viewInfo);
                 }
             }
