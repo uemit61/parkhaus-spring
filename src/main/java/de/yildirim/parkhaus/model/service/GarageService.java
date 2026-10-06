@@ -28,7 +28,7 @@ import java.util.List;
  * das auf MySQL unbemerkt und fällt erst auf einer Datenbank auf, die beim
  * Vergleich zwischen Groß- und Kleinschreibung unterscheidet.
  *
- * @author Ümit Yildirim <hopes61@icloud.com>
+ * @author Ümit Yildirim <uemit611@outlook.de>
  * @copyright Copyright (c) 2026 Ümit Yildirim. Alle Rechte vorbehalten.
  * @license Diese Datei darf nicht ohne Zustimmung des Autors weitergegeben oder verändert werden.
  */
@@ -107,7 +107,7 @@ public class GarageService
                 // Die Etage steht nicht im Code: die Kapazitäten werden der Reihe nach
                 // aufsummiert (j), bis die gesuchte Platznummer hineinfällt - die erste
                 // Etage, in die i noch passt, ist die gesuchte. Bleibt gefundeneEtage
-                // null, hat keine Etage mehr Platz: das Parkhaus ist voll. Ändert sich
+                // null, hat keine Etage mehr Platz: Das Parkhaus ist voll. Ändert sich
                 // eine Kapazität, genügt ein UPDATE an den Stammdaten.
                 int j = 0;
                 Parketage gefundeneEtage = null;

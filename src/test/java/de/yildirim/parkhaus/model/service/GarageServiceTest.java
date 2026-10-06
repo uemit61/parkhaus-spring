@@ -310,14 +310,10 @@ public class GarageServiceTest
     @DisplayName("Falsches Kennzeichen führt zum Fehler")
     void befahrenFalschesKennzeichenFehler()
     {
-
-
         // Falsches Kennzeichen
         String nummernschild = "AB-CDEF 123456";
         String typ = "Auto";
-
         garageService.befahren(nummernschild, typ);
-
         assertEquals(1,propList.size(), "genau eine Meldung wird erwartet");
         assertEquals("FailCheck", getProp().getPropertyName(), "Sollte 'FailCheck' melden");
         assertEquals(nummernschild,getProp().getNewValue(),"Sollte das ungültige Kennzeichen melden");

@@ -16,7 +16,7 @@ import java.util.List;
  * <p>Geprüft wird beim Start nur der <em>Name</em>, nicht der Rückgabetyp. Ein
  * unpassender Typ fällt erst beim Aufruf auf.
  *
- * @author      Ümit Yildirim <hopes61@icloud.com>
+ * @author      Ümit Yildirim <uemit611@outlook.de>
  * @copyright   Copyright (c) 2026 Ümit Yildirim. Alle Rechte vorbehalten.
  * @license     Diese Datei darf nicht ohne Zustimmung des Autors weitergegeben oder verändert werden.
  */

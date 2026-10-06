@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  * Kleinschreibung beim Vergleich ignoriert. Auf einer Datenbank, die das nicht
  * tut, fiele die Anwendung sofort auseinander.
  *
- * @author Ümit Yildirim <hopes61@icloud.com>
+ * @author Ümit Yildirim <uemit611@outlook.de>
  * @copyright Copyright (c) 2026 Ümit Yildirim. Alle Rechte vorbehalten.
  * @license Diese Datei darf nicht ohne Zustimmung des Autors weitergegeben oder verändert werden.
  */
