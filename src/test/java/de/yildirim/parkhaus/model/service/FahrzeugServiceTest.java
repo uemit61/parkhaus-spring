@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * nichts Zusätzliches. Ein Zählfehler um eins zeigt sich ausschließlich am Rand;
  * in der Mitte verhalten sich alle Fassungen gleich.
  *
- * @author      Ümit Yildirim <hopes61@icloud.com>
+ * @author      Ümit Yildirim <uemit611@outlook.de>
  * @copyright   Copyright (c) 2026 Ümit Yildirim. Alle Rechte vorbehalten.
  * @license     Diese Datei darf nicht ohne Zustimmung des Autors weitergegeben oder verändert werden.
  */

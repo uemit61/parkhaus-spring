@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Hochfahren nur, dass die Methodennamen auflösbar sind — nicht, dass sie das
  * Richtige tun.
  *
- * @author      Ümit Yildirim <hopes61@icloud.com>
+ * @author      Ümit Yildirim <uemit611@outlook.de>
  * @copyright   Copyright (c) 2026 Ümit Yildirim. Alle Rechte vorbehalten.
  * @license     Diese Datei darf nicht ohne Zustimmung des Autors weitergegeben oder verändert werden.
  *

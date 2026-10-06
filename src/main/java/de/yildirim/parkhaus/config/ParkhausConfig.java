@@ -21,7 +21,7 @@ import java.beans.PropertyChangeSupport;
  * zwei Dinge: ein Objekt aus einer fremden Bibliothek, das niemand annotieren
  * kann, und der Start der Oberfläche.
  *
- * @author      Ümit Yildirim <hopes61@icloud.com>
+ * @author      Ümit Yildirim <uemit611@outlook.de>
  * @copyright   Copyright (c) 2026 Ümit Yildirim. Alle Rechte vorbehalten.
  * @license     Diese Datei darf nicht ohne Zustimmung des Autors weitergegeben oder verändert werden.
  */

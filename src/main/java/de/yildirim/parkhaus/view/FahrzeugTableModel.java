@@ -13,7 +13,7 @@ import java.util.List;
  * Füllt die Fahrzeugtabelle direkt aus einer Liste von {@link Fahrzeug}-Objekten,
  * ohne den Umweg über Object-Arrays wie beim DefaultTableModel.
  *
- * @author      Ümit Yildirim <hopes61@icloud.com>
+ * @author      Ümit Yildirim <uemit611@outlook.de>
  * @copyright   Copyright (c) 2024-2026 Ümit Yildirim. Alle Rechte vorbehalten.
  * @license     Diese Datei darf nicht ohne Zustimmung des Autors weitergegeben oder verändert werden.
  */

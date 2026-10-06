@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
  * <p>Reine Datenklasse ohne Verhalten — sie kennt weder die Datenbank noch die
  * View. Der leere Konstruktor steht bewusst neben dem vollen, weil JPA es verlangt.
  *
- * @author Ümit Yildirim <hopes61@icloud.com>
+ * @author Ümit Yildirim <uemit611@outlook.de>
  * @copyright Copyright (c) 2026 Ümit Yildirim. Alle Rechte vorbehalten.
  * @license Diese Datei darf nicht ohne Zustimmung des Autors weitergegeben oder verändert werden.
  */

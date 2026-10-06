@@ -8,7 +8,7 @@ import java.beans.PropertyChangeSupport;
  * dieselbe Instanz, die Views registrieren sich auf die Namen der Ereignisse,
  * die sie interessieren.
  *
- * @author      Ümit Yildirim <hopes61@icloud.com>
+ * @author      Ümit Yildirim <uemit611@outlook.de>
  * @copyright   Copyright (c) 2024-2026 Ümit Yildirim. Alle Rechte vorbehalten.
  * @license     Diese Datei darf nicht ohne Zustimmung des Autors weitergegeben oder verändert werden.
  */
@@ -34,6 +34,7 @@ public class PropertyChangeHandle
 
     /**
      * Meldet ein Ereignis an alle Views, die sich auf diesen Namen angemeldet haben.
+     * Der alte Wert wurde bewusst auf NULL gesetzt, damit immer gefeuert wird.
      *
      * @param propName Name des Ereignisses
      * @param newValue mitgeschickte Daten, oder {@code null}, wenn das Ereignis für

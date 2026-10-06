@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * <p>Einfacher als {@code GarageRepositoryTest}: Hier genügen Fahrzeug-Zeilen,
  * es braucht weder eine Etage noch eine Belegung.
  *
- * @author      Ümit Yildirim <hopes61@icloud.com>
+ * @author      Ümit Yildirim <uemit611@outlook.de>
  * @copyright   Copyright (c) 2026 Ümit Yildirim. Alle Rechte vorbehalten.
  * @license     Diese Datei darf nicht ohne Zustimmung des Autors weitergegeben oder verändert werden.
  */
