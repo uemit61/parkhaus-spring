@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * Fachlogik rund um die Belegung der Parkplätze: Einfahrt, Ausfahrt, Position
@@ -83,25 +84,29 @@ public class GarageService
             }
             else
             {
-                // Beide Schleifen setzen aufsteigende Sortierung zwingend voraus - deshalb
+                // Beide Suchen setzen aufsteigende Sortierung zwingend voraus - deshalb
                 // das Sort.by(). findAll() ohne Sortierung sichert KEINE Reihenfolge zu;
                 // dass MySQL meist nach Primärschlüssel liefert, ist Zufall, kein Versprechen.
                 List<Integer> platzNrListe = garageRepository.findAll(Sort.by("platzNr")).stream().map(Garage::getPlatzNr).toList();
-                // Die Liste der Platznummern wird durchlaufen, die erste freie Platznummer, wird ausgewählt.
-                int i = 1; // i entspricht PlatzNr
-                // "value == i" vergleicht Zahlen und nicht Referenzen - aber nur, weil i ein
-                // int ist: dadurch wird value ausgepackt. Würde i zu Integer, stünden dort
-                // zwei Referenzen, und der Vergleich ginge bis 127 gut, weil der Integer-Cache
-                // für kleine Werte dieselbe Instanz liefert. Ab Platz 128 wären es zwei
-                // Objekte, die gleich sind, aber nicht dasselbe - bei 260 Plätzen also mitten
-                // im Betrieb. Kompiliert sauber, tut etwas anderes.
-                for (Integer value : platzNrListe)
-                {
-                    if (value == i)
-                        i++;
-                    else
-                        break;
-                }
+
+                // Gestreamt werden die Indizes, nicht die Platznummern: gesucht ist der erste
+                // Index, dessen Platznummer nicht um eins größer ist als er selbst. Bei
+                // [1,2,4,5,...] ist das Index 2 - Platz 3 ist frei. Wurde keine Nummer
+                // übersprungen, liefert orElse die nächste Nummer hinten.
+                //
+                // "idx+1 != platzNrListe.get(idx)" vergleicht Zahlen und nicht Referenzen -
+                // aber nur, weil idx aus dem IntStream ein int ist: dadurch wird die
+                // Integer-Platznummer ausgepackt. Stünden dort zwei Integer, ginge der
+                // Vergleich bis 127 gut, weil der Integer-Cache für kleine Werte dieselbe
+                // Instanz liefert. Ab Platz 128 wären es zwei Objekte, die gleich sind, aber
+                // nicht dasselbe - bei 260 Plätzen also mitten im Betrieb. Kompiliert sauber,
+                // tut etwas anderes.
+                int i = IntStream.range(0,platzNrListe.size())
+                        .filter(idx -> idx+1!=platzNrListe.get(idx))
+                        .map(idx -> idx+1)
+                        .findFirst()
+                        .orElse(platzNrListe.size()+1);
+
 
                 List<Parketage> parketageList = parketageRepository.findAll(Sort.by("etageNr"));
                 // Die Etage steht nicht im Code: die Kapazitäten werden der Reihe nach
@@ -109,6 +114,8 @@ public class GarageService
                 // Etage, in die i noch passt, ist die gesuchte. Bleibt gefundeneEtage
                 // null, hat keine Etage mehr Platz: Das Parkhaus ist voll. Ändert sich
                 // eine Kapazität, genügt ein UPDATE an den Stammdaten.
+
+                
                 int j = 0;
                 Parketage gefundeneEtage = null;
                 for (Parketage parketage : parketageList)
