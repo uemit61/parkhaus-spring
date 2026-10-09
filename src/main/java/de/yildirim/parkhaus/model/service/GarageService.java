@@ -2,6 +2,7 @@ package de.yildirim.parkhaus.model.service;
 
 import de.yildirim.parkhaus.model.entity.Garage;
 import de.yildirim.parkhaus.model.entity.Parketage;
+import de.yildirim.parkhaus.model.event.Ereignis;
 import de.yildirim.parkhaus.model.event.PropertyChangeHandle;
 import de.yildirim.parkhaus.model.repository.FahrzeugRepository;
 import de.yildirim.parkhaus.model.repository.GarageRepository;
@@ -80,7 +81,7 @@ public class GarageService
                     (!fahrzeugService.fahrzeugRegistrieren(nummernschild, typ, false) &&
                             !fahrzeugRepository.existsByNummernschildAndTyp(nummernschild, typ)))
             {
-                pch.propertyChange("Alarm", null);
+                pch.propertyChange(Ereignis.ALARM, null);
             }
             else
             {
@@ -109,14 +110,13 @@ public class GarageService
 
 
                 List<Parketage> parketageList = parketageRepository.findAll(Sort.by("etageNr"));
+
                 // Die Etage steht nicht im Code: die Kapazitäten werden der Reihe nach
                 // aufsummiert (j), bis die gesuchte Platznummer hineinfällt - die erste
                 // Etage, in die i noch passt, ist die gesuchte. Bleibt gefundeneEtage
                 // null, hat keine Etage mehr Platz: Das Parkhaus ist voll. Ändert sich
                 // eine Kapazität, genügt ein UPDATE an den Stammdaten.
-
-                
-                int j = 0;
+                int j=0;
                 Parketage gefundeneEtage = null;
                 for (Parketage parketage : parketageList)
                 {
@@ -128,9 +128,22 @@ public class GarageService
                     }
                 }
 
+                //Alternativ mit Streams, läuft aber kostet: O(n²);
+
+                //                  List<Integer> helpList = new ArrayList<>();
+                //
+                //                    int etageNr = IntStream.range(0,parketageList.size())
+                //                            .filter(idx ->
+                //                            {
+                //                                helpList.add(parketageList.get(idx).getAnzahlPlaetze());
+                //                                return i <=helpList.stream().mapToInt(b->b).sum();
+                //                            })
+                //                           .findFirst().orElse(-1);
+                //                    Parketage gefundeneEtage =  etageNr == -1 ? null : parketageList.get(etageNr);
+
                 if (gefundeneEtage==null)
                 {
-                    pch.propertyChange("Voll", null);
+                    pch.propertyChange(Ereignis.PARKPLATZ_VOLL, null);
                 }
                 else
                 {
@@ -141,13 +154,13 @@ public class GarageService
                     garageRepository.save(new Garage(i, gefundeneEtage, fahrzeugRepository.getReferenceById(nummernschild)));
 
                     List<Object> viewInfo = new ArrayList<>(Arrays.asList(typ, nummernschild, gefundeneEtage.getEtageNr(),i));
-                    pch.propertyChange("ZeigePos", viewInfo);
+                    pch.propertyChange(Ereignis.ZEIGE_POSITION, viewInfo);
                 }
             }
         }
         else
         {
-            pch.propertyChange("FailCheck", nummernschild);
+            pch.propertyChange(Ereignis.KENNZEICHEN_UNGUELTIG, nummernschild);
         }
     }
 
@@ -173,13 +186,13 @@ public class GarageService
         if (FahrzeugService.istGueltigesKennzeichen(nummernschild))
         {
             if (garageRepository.deleteByFahrzeug_NummernschildAndFahrzeug_Typ(nummernschild, typ) == 1)
-                pch.propertyChange("Verlassen", nummernschild);
+                pch.propertyChange(Ereignis.PARKPLATZ_VERLASSEN, nummernschild);
             else
-                pch.propertyChange("Fail", nummernschild);
+                pch.propertyChange(Ereignis.KENNZEICHEN_NICHT_GEFUNDEN, nummernschild);
         }
         else
         {
-            pch.propertyChange("FailCheck", nummernschild);
+            pch.propertyChange(Ereignis.KENNZEICHEN_UNGUELTIG, nummernschild);
         }
     }
 
@@ -206,14 +219,14 @@ public class GarageService
             {
                 Garage garage = garageList.getFirst();
                 List<Object> position = new ArrayList<>(Arrays.asList(garage.getFahrzeug().getTyp(), nummernschild, garage.getParketage().getEtageNr(), garage.getPlatzNr()));
-                pch.propertyChange("ZeigePos", position);
+                pch.propertyChange(Ereignis.ZEIGE_POSITION, position);
             }
             else
-                pch.propertyChange("Fail", nummernschild);
+                pch.propertyChange(Ereignis.KENNZEICHEN_NICHT_GEFUNDEN, nummernschild);
         }
         else
         {
-            pch.propertyChange("FailCheck", nummernschild);
+            pch.propertyChange(Ereignis.KENNZEICHEN_UNGUELTIG, nummernschild);
         }
     }
 
@@ -230,7 +243,7 @@ public class GarageService
     {
         List<Garage> garageListe = garageRepository.findAll();
 
-        pch.propertyChange("TabAn", garageListe);
-        pch.propertyChange("PanelTabelle", null);
+        pch.propertyChange(Ereignis.PARKPLATZ_TABELLE, garageListe);
+        pch.propertyChange(Ereignis.PANEL_TABELLE, null);
     }
 }

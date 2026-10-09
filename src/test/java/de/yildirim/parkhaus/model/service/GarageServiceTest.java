@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static de.yildirim.parkhaus.model.event.Ereignis.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -149,7 +150,7 @@ public class GarageServiceTest
         garageService.verlassen(nummernschild, typ);
         // Zunächst wird getestet, ob eine Meldung vorliegt
         assertEquals(1, propList.size(), "genau eine Meldung wird erwartet");
-        assertEquals("FailCheck", getProp().getPropertyName(), "\"" + nummernschild + "\"- ein ungültiges sollte die gewünschte Meldung" + "senden");
+        assertEquals(KENNZEICHEN_UNGUELTIG.name(), getProp().getPropertyName(), "\"" + nummernschild + "\"- ein ungültiges sollte die gewünschte Meldung" + "senden");
         verifyNoInteractions(garageRepository);
     }
 
@@ -176,7 +177,7 @@ public class GarageServiceTest
         when(garageRepository.deleteByFahrzeug_NummernschildAndFahrzeug_Typ("TT-TS 61", "Auto")).thenReturn(1);
         garageService.verlassen("tt-ts 61", "Auto");
         assertEquals(1, propList.size(), "genau eine Meldung wird erwartet");
-        assertEquals("Verlassen", getProp().getPropertyName(), "Sollte 'Verlassen' melden");
+        assertEquals(PARKPLATZ_VERLASSEN.name(), getProp().getPropertyName(), "Sollte 'Verlassen' melden");
         assertEquals("TT-TS 61", getProp().getNewValue(), "Meldung trägt das normalisierte Kennzeichen");
     }
 
@@ -195,7 +196,7 @@ public class GarageServiceTest
         when(garageRepository.deleteByFahrzeug_NummernschildAndFahrzeug_Typ("TT-TS 34", "Auto")).thenReturn(0);
         garageService.verlassen("TT-TS 34", "Auto");
         assertEquals(1, propList.size(), "genau eine Meldung wird erwartet");
-        assertEquals("Fail", getProp().getPropertyName(), "\"TT-TS 34\"-Sollte eine Fehlermeldung anzeigen");
+        assertEquals(KENNZEICHEN_NICHT_GEFUNDEN.name(), getProp().getPropertyName(), "\"TT-TS 34\"-Sollte eine Fehlermeldung anzeigen");
     }
 
 
@@ -226,7 +227,7 @@ public class GarageServiceTest
         garageService.zeigePosition(nummernschild);
         // Zunächst wird getestet, ob eine Meldung vorliegt
         assertEquals(1, propList.size(), "genau eine Meldung wird erwartet");
-        assertEquals("FailCheck", getProp().getPropertyName(), "\"" + nummernschild + "\"- ein ungültiges sollte die gewünschte Meldung" + "senden");
+        assertEquals(KENNZEICHEN_UNGUELTIG.name(), getProp().getPropertyName(), "\"" + nummernschild + "\"- ein ungültiges sollte die gewünschte Meldung" + "senden");
         assertEquals(nummernschild,getProp().getNewValue(), "Sollte das falsche Kennzeichen weiterleiten");
         verifyNoInteractions(garageRepository);
     }
@@ -262,7 +263,7 @@ public class GarageServiceTest
         Garage garage = garageList.getFirst();
         List<Object> position = new ArrayList<>(Arrays.asList(garage.getFahrzeug().getTyp(),nummernschild , garage.getParketage().getEtageNr(), garage.getPlatzNr()));
 
-        assertEquals("ZeigePos",getProp().getPropertyName(),"Sollte 'zeigePosition' melden");
+        assertEquals(ZEIGE_POSITION.name(),getProp().getPropertyName(),"Sollte 'zeigePosition' melden");
         assertEquals(position,getProp().getNewValue(), "Sollte das entsprechende Objekt position feuern");
 
     }
@@ -289,7 +290,7 @@ public class GarageServiceTest
 
         garageService.zeigePosition("TT-TS 61");
         assertEquals(1,propList.size(), "genau eine Meldung wird erwartet");
-        assertEquals("Fail",getProp().getPropertyName(),"Sollte Fail melden");
+        assertEquals(KENNZEICHEN_NICHT_GEFUNDEN.name(),getProp().getPropertyName(),"Sollte Fail melden");
         assertEquals(nummernschild,getProp().getNewValue(), "Sollte das falsche Kennzeichen weiterleiten");
     }
 
@@ -315,7 +316,7 @@ public class GarageServiceTest
         String typ = "Auto";
         garageService.befahren(nummernschild, typ);
         assertEquals(1,propList.size(), "genau eine Meldung wird erwartet");
-        assertEquals("FailCheck", getProp().getPropertyName(), "Sollte 'FailCheck' melden");
+        assertEquals(KENNZEICHEN_UNGUELTIG.name(), getProp().getPropertyName(), "Sollte 'FailCheck' melden");
         assertEquals(nummernschild,getProp().getNewValue(),"Sollte das ungültige Kennzeichen melden");
         verifyNoInteractions(garageRepository);
         verifyNoInteractions(fahrzeugService);
@@ -344,7 +345,7 @@ public class GarageServiceTest
         garageService.befahren(nummernschild,typ);
 
         assertEquals(1,propList.size(), "genau eine Meldung wird erwartet");
-        assertEquals("Alarm",getProp().getPropertyName(),"Sollte 'Alarm' melden");
+        assertEquals(ALARM.name(),getProp().getPropertyName(),"Sollte 'Alarm' melden");
 
     }
 
@@ -371,8 +372,7 @@ public class GarageServiceTest
         String typ = "Auto";
         garageService.befahren(nummernschild,typ);
         assertEquals(1,propList.size(), "genau eine Meldung wird erwartet");
-        assertEquals("Alarm",getProp().getPropertyName(),"Sollte 'Alarm' melden");
-        
+        assertEquals(ALARM.name(),getProp().getPropertyName(),"Sollte 'Alarm' melden");
     }
 
 
@@ -419,7 +419,7 @@ public class GarageServiceTest
         garageService.befahren(nummernschild, typ);
 
         assertEquals(1,propList.size(), "genau eine Meldung wird erwartet");
-        assertEquals("Voll",getProp().getPropertyName(),"Sollte 'Voll' melden");
+        assertEquals(PARKPLATZ_VOLL.name() ,getProp().getPropertyName(),"Sollte 'Voll' melden");
     }
 
     /**
@@ -469,7 +469,7 @@ public class GarageServiceTest
         List<Object> viewInfo = new ArrayList<>(Arrays.asList(typ, nummernschild, 2,2));
 
         assertEquals(1,propList.size(), "genau eine Meldung wird erwartet");
-        assertEquals("ZeigePos",getProp().getPropertyName(),"Sollte 'ZeigePos' melden");
+        assertEquals(ZEIGE_POSITION.name(),getProp().getPropertyName(),"Sollte 'ZeigePos' melden");
         assertEquals(viewInfo,getProp().getNewValue(),"Sollte viewInfo feuern");
     }
 
@@ -509,9 +509,9 @@ public class GarageServiceTest
         garageService.parkplatzTabelle();
 
         assertEquals(2,propList.size(), "genau zwei Meldung werden erwartet");
-        assertEquals("TabAn",propList.getFirst().getPropertyName(),"Sollte 'TabAn' melden");
+        assertEquals(PARKPLATZ_TABELLE.name(),propList.getFirst().getPropertyName(),"Sollte 'TabAn' melden");
         assertEquals(garageList, propList.getFirst().getNewValue(),"Sollte garageList feuern");
-        assertEquals("PanelTabelle",propList.getLast().getPropertyName(),"Sollte 'PanelTabelle' melden");
+        assertEquals(PANEL_TABELLE.name(),propList.getLast().getPropertyName(),"Sollte 'PanelTabelle' melden");
 
     }
 

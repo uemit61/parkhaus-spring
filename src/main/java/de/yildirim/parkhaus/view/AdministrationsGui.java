@@ -1,6 +1,7 @@
 package de.yildirim.parkhaus.view;
 
 import de.yildirim.parkhaus.controller.Controller;
+import de.yildirim.parkhaus.model.event.Ereignis;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -29,12 +30,12 @@ public class AdministrationsGui extends JPanel implements PropertyChangeListener
 	
 	public void addProperty()
 	{
-		controller.addPropertyListener("FailCheck", this);
-		controller.addPropertyListener("Regist", this);
-		controller.addPropertyListener("Loeschen", this);
-		controller.addPropertyListener("LoeschenFail", this);
-		controller.addPropertyListener("Verboten", this);
-		controller.addPropertyListener("Vorhanden", this);
+		controller.addPropertyListener(Ereignis.KENNZEICHEN_UNGUELTIG, this);
+		controller.addPropertyListener(Ereignis.REGISTRIERT, this);
+		controller.addPropertyListener(Ereignis.FAHRZEUG_GELOESCHT, this);
+		controller.addPropertyListener(Ereignis.FAHRZEUG_LOESCHEN_FEHLGESCHLAGEN, this);
+		controller.addPropertyListener(Ereignis.LOESCHEN_VERBOTEN, this);
+		controller.addPropertyListener(Ereignis.SCHON_REGISTRIERT, this);
 	}
 
 	/**
@@ -170,7 +171,7 @@ public class AdministrationsGui extends JPanel implements PropertyChangeListener
 	private void btnZuruekActionPerformed(ActionEvent e) 
 	{
 		numSchEingabe.setText("");
-		controller.propertyChange("Zuruck");
+		controller.propertyChange(Ereignis.ZURUECK_HAUPTPANEL);
 		lblInfo.setText("");
 	}
 
@@ -190,37 +191,37 @@ public class AdministrationsGui extends JPanel implements PropertyChangeListener
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) 
 	{
-        switch (evt.getPropertyName())
+        switch (Ereignis.valueOf(evt.getPropertyName()))
         {
-            case "FailCheck" ->
+			case KENNZEICHEN_UNGUELTIG ->
             {
                 String numSchild = (String) evt.getNewValue();
 
                 lblInfo.setText("Das Nummernschild '" + numSchild + "' hat ein falsches Format.");
             }
-            case "Regist" ->
+			case REGISTRIERT ->
             {
                 String[] pos = (String[]) evt.getNewValue();
 
                 lblInfo.setText("Das " + pos[1] + " '" + pos[0] + "' wurde registriert.");
             }
-			case "Vorhanden" ->
+			case SCHON_REGISTRIERT ->
 			{
 				String pos = (String) evt.getNewValue();
 
 				lblInfo.setText("Ein Fahrzeug mit dem selben Kennzeichen '" + pos + "' ist bereits registriert.");
 			}
-            case "Loeschen" ->
+			case FAHRZEUG_GELOESCHT ->
             {
                 String[] pos = (String[]) evt.getNewValue();
                 lblInfo.setText("Das " + pos[1] + " '" + pos[0] + "' wurde gelöscht");
             }
-            case "LoeschenFail" ->
+			case FAHRZEUG_LOESCHEN_FEHLGESCHLAGEN ->
             {
                 String[] pos = (String[]) evt.getNewValue();
                 lblInfo.setText("Das " + pos[1] + " '" + pos[0] + "' ist nicht registriert.");
             }
-            case "Verboten" ->
+			case LOESCHEN_VERBOTEN ->
             {
                 String nummernschild = (String) evt.getNewValue();
                 lblInfo.setText("Verboten! Das Fahrzeug " + nummernschild + " muss erst ausgecheckt werden.");

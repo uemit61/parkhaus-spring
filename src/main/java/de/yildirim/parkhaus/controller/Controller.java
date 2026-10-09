@@ -1,6 +1,7 @@
 package de.yildirim.parkhaus.controller;
 
 
+import de.yildirim.parkhaus.model.event.Ereignis;
 import de.yildirim.parkhaus.model.event.PropertyChangeHandle;
 import de.yildirim.parkhaus.model.service.FahrzeugService;
 import de.yildirim.parkhaus.model.service.GarageService;
@@ -45,12 +46,12 @@ public class Controller
         this.pch = pch;
     }
 
-    public void addPropertyListener(String propName, PropertyChangeListener view)
+    public void addPropertyListener(Ereignis propName, PropertyChangeListener view)
     {
         pch.addPropertyChangeListener(propName, view);
     }
 
-    public void propertyChange(String propName)
+    public void propertyChange(Ereignis propName)
     {
         pch.propertyChange(propName, null);
     }
@@ -79,7 +80,7 @@ public class Controller
 
     public void fahrzeugRegistrieren(String nummernschild,String typ)
     {
-        //Propertier 'admin' sagt der Methode, dass Sie vom AdminView aufgerufen wurde
+        //Attribute 'admin' sagt der Methode, dass Sie vom AdminView aufgerufen wurde
         //Check sagt, ob die Existenz des Fahrzeugs geprüft wurde.
         fahrzeugService.fahrzeugRegistrieren(nummernschild,typ,true);
     }

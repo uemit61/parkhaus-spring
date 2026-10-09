@@ -2,6 +2,7 @@ package de.yildirim.parkhaus.view;
 
 import de.yildirim.parkhaus.controller.Controller;
 import de.yildirim.parkhaus.model.entity.Garage;
+import de.yildirim.parkhaus.model.event.Ereignis;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,7 +29,7 @@ public class ParkplatzTabelle extends JPanel implements PropertyChangeListener
 
 	public void addProperty()
 	{
-		controller.addPropertyListener("TabAn", this);
+		controller.addPropertyListener(Ereignis.PARKPLATZ_TABELLE, this);
 	}
 	/**
 	 * Create the panel.
@@ -64,7 +65,7 @@ public class ParkplatzTabelle extends JPanel implements PropertyChangeListener
 
 	private void btnZuruckActionPerformed(ActionEvent e) 
 	{
-		controller.propertyChange("ZuruckAdmin");
+		controller.propertyChange(Ereignis.ZURUECK_ADMIN_PANEL);
 	}
 	
 	@Override

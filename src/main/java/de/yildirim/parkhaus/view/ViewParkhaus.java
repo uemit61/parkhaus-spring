@@ -1,6 +1,7 @@
 package de.yildirim.parkhaus.view;
 
 import de.yildirim.parkhaus.controller.Controller;
+import de.yildirim.parkhaus.model.event.Ereignis;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -10,6 +11,8 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
+
+import static de.yildirim.parkhaus.model.event.Ereignis.ALARM;
 
 
 /**
@@ -48,17 +51,17 @@ public class ViewParkhaus implements PropertyChangeListener
 
 	public void addPropertys()
 	{
-		controller.addPropertyListener("Alarm", this);
-		controller.addPropertyListener("Fail", this);
-		controller.addPropertyListener("Verlassen",this);
-		controller.addPropertyListener("ZeigePos", this);
-		controller.addPropertyListener("Voll", this);
-		controller.addPropertyListener("Frei", this);
-		controller.addPropertyListener("Zuruck", this);
-		controller.addPropertyListener("FailCheck",this);
-		controller.addPropertyListener("PanelTabelle", this);
-		controller.addPropertyListener("ZuruckAdmin", this);
-		controller.addPropertyListener("PanelTabelleAuto",this);
+		controller.addPropertyListener(ALARM, this);
+		controller.addPropertyListener(Ereignis.KENNZEICHEN_NICHT_GEFUNDEN, this);
+		controller.addPropertyListener(Ereignis.PARKPLATZ_VERLASSEN,this);
+		controller.addPropertyListener(Ereignis.ZEIGE_POSITION, this);
+		controller.addPropertyListener(Ereignis.PARKPLATZ_VOLL, this);
+		controller.addPropertyListener(Ereignis.FREIE_PLAETZE, this);
+		controller.addPropertyListener(Ereignis.ZURUECK_HAUPTPANEL, this);
+		controller.addPropertyListener(Ereignis.KENNZEICHEN_UNGUELTIG,this);
+		controller.addPropertyListener(Ereignis.PANEL_TABELLE, this);
+		controller.addPropertyListener(Ereignis.ZURUECK_ADMIN_PANEL, this);
+		controller.addPropertyListener(Ereignis.PANEL_TABELLE_FAHRZEUG,this);
 	}
 	
 	
@@ -239,73 +242,73 @@ public class ViewParkhaus implements PropertyChangeListener
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) 
 	{
-        switch (evt.getPropertyName())
+        switch (Ereignis.valueOf(evt.getPropertyName()))
         {
-            case "Alarm" ->
+            case ALARM ->
             {
                 lblInformation.setText("Ein Auto mit dem selben Nummernschild befindet sich im Parkhaus.");
                 lblInformation_2.setText("Wegfahrsperre wurde aktiviert. Bitte informieren Sie die Polizei!");
             }
-            case "Voll" ->
+			case PARKPLATZ_VOLL ->
             {
                 lblInformation_2.setText("Parkplatz ist VOLL.");
                 lblInformation.setText("");
             }
-            case "Fail" ->
+			case KENNZEICHEN_NICHT_GEFUNDEN ->
             {
                 String numschild = (String) evt.getNewValue();
                 lblInformation.setText("");
                 lblInformation_2.setText("Das Fahrzeug '" + numschild + "' befindet sich nicht im Parkhaus.");
 
             }
-            case "Verlassen" ->
+			case PARKPLATZ_VERLASSEN ->
             {
                 String numschild = (String) evt.getNewValue();
                 lblInformation_2.setText("");
                 lblInformation.setText("Das Fahrzeug '" + numschild + "' hat das Parkhaus verlassen.");
 
             }
-            case "ZeigePos" ->
+			case ZEIGE_POSITION ->
             {
 				@SuppressWarnings("unchecked")
                 List<Object> position = (List<Object>) evt.getNewValue();
                 lblInformation_2.setText("");
                 lblInformation.setText("Der Parkplatz vom " + position.getFirst() + " '" + position.get(1) + "' befindet sich auf der Etage " + position.get(2) + " auf Platz " + position.get(3));
             }
-            case "Frei" ->
+			case FREIE_PLAETZE ->
             {
                 int frei = 0;
                 frei = (int) evt.getNewValue();
                 lblAnzahFrei.setText("" + frei);
             }
-            case "FailCheck" ->
+			case KENNZEICHEN_UNGUELTIG ->
             {
                 String numSchild = (String) evt.getNewValue();
                 lblInformation.setText("");
                 lblInformation_2.setText("Falsche Eingabe. Das Nummernschild '" + numSchild + "' hat ein falsches Format. ");
             }
-            case "Zuruck" ->
+			case ZURUECK_HAUPTPANEL ->
             {
                 frame.setBounds(300, 100, 800, 400);
                 lblInformation_2.setText("");
                 lblInformation.setText("");
                 frame.setContentPane(tempPanel); //wechselt tempPanel =getContentPane entspricht der (hauptpanel)
             }
-            case "PanelTabelle" ->
+			case PANEL_TABELLE ->
             {
                 frame.setBounds(300, 100, 590, 590);
                 lblInformation_2.setText("");
                 lblInformation.setText("");
                 frame.setContentPane(parkplatzTabelle);
             }
-            case "ZuruckAdmin" ->
+			case ZURUECK_ADMIN_PANEL ->
             {
                 frame.setBounds(300, 100, 650, 410);
                 lblInformation.setText("");
                 lblInformation_2.setText("");
                 frame.setContentPane(adminView);
             }
-            case "PanelTabelleAuto" ->
+			case PANEL_TABELLE_FAHRZEUG ->
             {
                 frame.setBounds(300, 100, 590, 590);
                 lblInformation_2.setText("");

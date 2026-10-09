@@ -1,6 +1,7 @@
 package de.yildirim.parkhaus.model.service;
 
 import de.yildirim.parkhaus.model.entity.Parketage;
+import de.yildirim.parkhaus.model.event.Ereignis;
 import de.yildirim.parkhaus.model.event.PropertyChangeHandle;
 import de.yildirim.parkhaus.model.repository.GarageRepository;
 import de.yildirim.parkhaus.model.repository.ParketageRepository;
@@ -61,7 +62,7 @@ public class ParketageService
 
         // count() und sum() rechnen in long; die View erwartet ein int. Bei einer
         // Platzzahl in dieser Größenordnung ist die Verengung gefahrlos.
-        pch.propertyChange("Frei", (int) freiePlaetze);
+        pch.propertyChange(Ereignis.FREIE_PLAETZE, (int) freiePlaetze);
 
     }
 }

@@ -1,6 +1,7 @@
 package de.yildirim.parkhaus.model.service;
 
 import de.yildirim.parkhaus.model.entity.Fahrzeug;
+import de.yildirim.parkhaus.model.event.Ereignis;
 import de.yildirim.parkhaus.model.event.PropertyChangeHandle;
 import de.yildirim.parkhaus.model.repository.FahrzeugRepository;
 import de.yildirim.parkhaus.model.repository.GarageRepository;
@@ -85,19 +86,19 @@ public class FahrzeugService
             if (fahrzeugRepository.existsById(nummernschild))
             {
                 if (admin)
-                    pch.propertyChange("Vorhanden", nummernschild);
+                    pch.propertyChange(Ereignis.SCHON_REGISTRIERT, nummernschild);
             }
             else
             {
                 fahrzeugRepository.save(new Fahrzeug(nummernschild, typ));
                 if (admin)
-                    pch.propertyChange("Regist", props);
+                    pch.propertyChange(Ereignis.REGISTRIERT, props);
 
                 retVal = true;
             }
         }
         else
-            pch.propertyChange("FailCheck", nummernschild);
+            pch.propertyChange(Ereignis.KENNZEICHEN_UNGUELTIG, nummernschild);
 
         return retVal;
     }
@@ -112,8 +113,8 @@ public class FahrzeugService
         List<Fahrzeug> liste_Fahrzeug = fahrzeugRepository.findAll();
 
         //View
-        pch.propertyChange("AutoTab", liste_Fahrzeug);
-        pch.propertyChange("PanelTabelleAuto", null);
+        pch.propertyChange(Ereignis.FAHRZEUG_TABELLE, liste_Fahrzeug);
+        pch.propertyChange(Ereignis.PANEL_TABELLE_FAHRZEUG, null);
     }
 
     /**
@@ -142,19 +143,19 @@ public class FahrzeugService
                 if(fahrzeugRepository.existsById(nummernschild))
                 {
                     if (fahrzeugRepository.deleteByNummernschildAndTyp(nummernschild, typ) != 0)
-                        pch.propertyChange("Loeschen", props);
+                        pch.propertyChange(Ereignis.FAHRZEUG_GELOESCHT, props);
                     else
-                        pch.propertyChange("Alarm",null);
+                        pch.propertyChange(Ereignis.ALARM,null);
                 }
                 else
-                    pch.propertyChange("LoeschenFail", props);
+                    pch.propertyChange(Ereignis.FAHRZEUG_LOESCHEN_FEHLGESCHLAGEN, props);
             }
             else
-                pch.propertyChange("Verboten", nummernschild);
+                pch.propertyChange(Ereignis.LOESCHEN_VERBOTEN, nummernschild);
         }
         else
         {
-            pch.propertyChange("FailCheck", nummernschild);
+            pch.propertyChange(Ereignis.KENNZEICHEN_UNGUELTIG, nummernschild);
         }
 
     }
