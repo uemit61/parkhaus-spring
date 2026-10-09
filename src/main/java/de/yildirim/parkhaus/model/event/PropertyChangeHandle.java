@@ -24,12 +24,12 @@ public class PropertyChangeHandle
     /**
      * Meldet eine View für ein bestimmtes Ereignis an.
      *
-     * @param probName Name des Ereignisses, zum Beispiel "Alarm"
+     * @param propName Name des Ereignisses, zum Beispiel "Alarm"
      * @param pcl      die View, die darauf reagieren soll
      */
-    public void addPropertyChangeListener(String probName, PropertyChangeListener pcl)
+    public void addPropertyChangeListener(Ereignis propName, PropertyChangeListener pcl)
     {
-        support.addPropertyChangeListener(probName, pcl);
+        support.addPropertyChangeListener(propName.name(), pcl);
     }
 
     /**
@@ -40,9 +40,9 @@ public class PropertyChangeHandle
      * @param newValue mitgeschickte Daten, oder {@code null}, wenn das Ereignis für
      *                 sich allein spricht
      */
-    public void propertyChange(String propName, Object newValue)
+    public void propertyChange(Ereignis propName, Object newValue)
     {
-        support.firePropertyChange(propName, null, newValue);
+        support.firePropertyChange(propName.name(), null, newValue);
     }
 
 }
