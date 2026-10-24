@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.IntStream;
 
 /**
@@ -74,9 +75,12 @@ public class GarageService
     @Transactional
     public void befahren(String nummernschild, String typ)
     {
-        nummernschild = nummernschild.toUpperCase();
-        if (FahrzeugService.istGueltigesKennzeichen(nummernschild))
+        nummernschild = nummernschild.toUpperCase(Locale.ROOT);
+        if(typ == null)
+            pch.propertyChange(Ereignis.TYPANGABE_FEHLT,false);
+        else if (FahrzeugService.istGueltigesKennzeichen(nummernschild))
         {
+
             if (garageRepository.existsByFahrzeug_Nummernschild(nummernschild) ||
                     (!fahrzeugService.fahrzeugRegistrieren(nummernschild, typ, false) &&
                             !fahrzeugRepository.existsByNummernschildAndTyp(nummernschild, typ)))
@@ -182,8 +186,10 @@ public class GarageService
     @Transactional
     public void verlassen(String nummernschild, String typ)
     {
-        nummernschild = nummernschild.toUpperCase();
-        if (FahrzeugService.istGueltigesKennzeichen(nummernschild))
+        nummernschild =nummernschild.toUpperCase(Locale.ROOT);
+        if(typ == null)
+            pch.propertyChange(Ereignis.TYPANGABE_FEHLT,false);
+        else if (FahrzeugService.istGueltigesKennzeichen(nummernschild))
         {
             if (garageRepository.deleteByFahrzeug_NummernschildAndFahrzeug_Typ(nummernschild, typ) == 1)
                 pch.propertyChange(Ereignis.PARKPLATZ_VERLASSEN, nummernschild);
@@ -209,10 +215,9 @@ public class GarageService
     @Transactional(readOnly = true)
     public void zeigePosition(String nummernschild)
     {
-        nummernschild = nummernschild.toUpperCase();
+        nummernschild = nummernschild.toUpperCase(Locale.ROOT);
         if (FahrzeugService.istGueltigesKennzeichen(nummernschild))
         {
-
             List<Garage> garageList = garageRepository.findByFahrzeug_Nummernschild(nummernschild);
 
             if (!garageList.isEmpty())

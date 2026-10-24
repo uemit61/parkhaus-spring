@@ -1,16 +1,11 @@
 package de.yildirim.parkhaus.view;
 
-
-
-
 import de.yildirim.parkhaus.controller.Controller;
 import de.yildirim.parkhaus.model.entity.Fahrzeug;
 import de.yildirim.parkhaus.model.event.Ereignis;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -40,19 +35,12 @@ public class AutoTabelle extends JPanel implements PropertyChangeListener
 	 */
 	public AutoTabelle(Controller controller) 
 	{
-		
 		this.controller = controller;
 		addProperty();
-		
 		setLayout(null);
 		
 		btnZuruck = new JButton("Zurück");
-		btnZuruck.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) 
-			{
-				btnZuruckActionPerformed(e);
-			}
-		});
+		btnZuruck.addActionListener(this::btnZuruckActionPerformed);
 		btnZuruck.setFont(new Font("Tahoma", Font.BOLD, 14));
 		btnZuruck.setBounds(60, 50, 85, 30);
 		add(btnZuruck);
@@ -66,6 +54,7 @@ public class AutoTabelle extends JPanel implements PropertyChangeListener
 		table.setModel(fahrzeugTableModel);
 		scrollPane.setViewportView(table);
 	}
+
 
 	private void btnZuruckActionPerformed(ActionEvent e) 
 	{

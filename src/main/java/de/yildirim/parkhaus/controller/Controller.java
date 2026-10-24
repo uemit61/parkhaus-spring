@@ -56,21 +56,23 @@ public class Controller
         pch.propertyChange(propName, null);
     }
 
-    public void freiePlaetze()
+    public void ermittleFreiePlaetze()
     {
-        parketageService.freiePlaetze();
+        parketageService.ermittleFreiePlaetze();
     }
+
+    public void ladeFahrzeuge() { fahrzeugService.ladeFahrzeuge();}
 
     public void befahren(String nummernschild, String typ)
     {
         modelGarage.befahren(nummernschild,typ);
-        parketageService.freiePlaetze();
+        parketageService.ermittleFreiePlaetze();
     }
 
     public void verlassen(String nummernschild,String typ)
     {
         modelGarage.verlassen(nummernschild,typ);
-        freiePlaetze();
+        ermittleFreiePlaetze();
     }
 
     public void zeigePos(String nummernschild)

@@ -36,7 +36,7 @@ public class Fahrzeug
     @Override
     public String toString()
     {
-        return String.format("Kennzeichen: %s",nummernschild);
+        return nummernschild;
     }
 
     @Override
