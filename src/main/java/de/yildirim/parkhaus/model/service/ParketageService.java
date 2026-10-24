@@ -47,10 +47,10 @@ public class ParketageService
      * braucht dieses {@code findAll()} kein {@code Sort}.
      */
     @Transactional(readOnly = true)
-    public void freiePlaetze()
+    public void ermittleFreiePlaetze()
     {
-        long freiePlaetze =0;
-        long gesamtkapazitaet =0;
+        long freiePlaetze ;
+        long gesamtkapazitaet ;
         long belegtPlaetze =garageRepository.count();
 
 

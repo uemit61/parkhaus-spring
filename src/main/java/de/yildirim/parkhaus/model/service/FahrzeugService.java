@@ -8,6 +8,7 @@ import de.yildirim.parkhaus.model.repository.GarageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -78,8 +79,9 @@ public class FahrzeugService
         props[1] = typ;
         boolean retVal = false;
 
-
-        if (istGueltigesKennzeichen(nummernschild))
+        if(typ == null)
+            pch.propertyChange(Ereignis.TYPANGABE_FEHLT,admin);
+        else if (istGueltigesKennzeichen(nummernschild))
         {
 
             //Wenn die Abfrage von der Administration kommt, wird geprüft, ob es schon registriert ist.
@@ -103,6 +105,8 @@ public class FahrzeugService
         return retVal;
     }
 
+
+
     /**
      * Liest alle registrierten Fahrzeuge und schickt sie als Liste an die View, die
      * daraus ihre Tabelle füllt.
@@ -114,6 +118,7 @@ public class FahrzeugService
 
         //View
         pch.propertyChange(Ereignis.FAHRZEUG_TABELLE, liste_Fahrzeug);
+
         pch.propertyChange(Ereignis.PANEL_TABELLE_FAHRZEUG, null);
     }
 
@@ -138,6 +143,7 @@ public class FahrzeugService
             props[0] = nummernschild;
             props[1] = typ;
 
+
             if (!garageRepository.existsByFahrzeug_Nummernschild(nummernschild))
             {
                 if(fahrzeugRepository.existsById(nummernschild))
@@ -157,7 +163,13 @@ public class FahrzeugService
         {
             pch.propertyChange(Ereignis.KENNZEICHEN_UNGUELTIG, nummernschild);
         }
+    }
 
+    public void ladeFahrzeuge()
+    {
+        List<Fahrzeug> liste_Fahrzeug;
+        liste_Fahrzeug = fahrzeugRepository.findAll();
+        pch.propertyChange(Ereignis.FAHRZEUGE_GELADEN,liste_Fahrzeug);
     }
 
     /**

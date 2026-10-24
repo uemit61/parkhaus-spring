@@ -89,7 +89,7 @@ public class GarageServiceTest
 
     public final List<PropertyChangeEvent> propList = new ArrayList<>();
 
-
+    //ComeTo- vor jedem Test wird aufgebaut.
     @BeforeEach
     void aufbau()
     {
@@ -122,9 +122,9 @@ public class GarageServiceTest
     // ---------------------------------------------------------------------------
     // verlassen() - drei Zweige, drei Testmethoden.
     //
-    // Entschieden wird allein an der Zahl, die deleteBy... zurueckgibt: 1 bedeutet
-    // ausgetragen, alles andere nicht gefunden. Die drei Faelle unterscheiden sich
-    // deshalb GENAU in diesem Wert - und lassen sich darum nicht ueber einen
+    // Entschieden wird allein an der Zahl, die deleteBy... zurückgibt: 1 bedeutet
+    // ausgetragen, alles andere nicht gefunden. Die drei Fälle unterscheiden sich
+    // deshalb GENAU in diesem Wert - und lassen sich darum nicht über einen
     // gemeinsamen Stub im Aufbau abbilden.
     // ---------------------------------------------------------------------------
     /**

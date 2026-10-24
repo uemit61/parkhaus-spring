@@ -1,6 +1,7 @@
 package de.yildirim.parkhaus.view;
 
 import de.yildirim.parkhaus.controller.Controller;
+import de.yildirim.parkhaus.model.entity.Fahrzeug;
 import de.yildirim.parkhaus.model.event.Ereignis;
 
 import javax.swing.*;
@@ -24,9 +25,11 @@ public class AdministrationsGui extends JPanel implements PropertyChangeListener
 	@Serial
     private static final long serialVersionUID = 1L;
     private Controller controller =null;
-	private JComboBox boxTyp;
-	private final JTextField numSchEingabe;
 	private final JLabel lblInfo;
+	private   JComboBox<String> boxTyp;
+	private final DefaultComboBoxModel<String> typDefaultComboBoxModel;
+	private final JComboBox<Fahrzeug> fahrzeugJComboBox;
+	private final DefaultComboBoxModel<Fahrzeug> fahrzeugDefaultComboBoxModel;
 	
 	public void addProperty()
 	{
@@ -41,106 +44,83 @@ public class AdministrationsGui extends JPanel implements PropertyChangeListener
 	/**
 	 * Create the panel.
 	 */
-	public AdministrationsGui(Controller controller) 
+	public AdministrationsGui(Controller controller, DefaultComboBoxModel<Fahrzeug> fahrzeugDefaultComboBoxModel,
+			DefaultComboBoxModel<String> typDefaultComboBoxModel)
 	{
-		
+		this.fahrzeugDefaultComboBoxModel = fahrzeugDefaultComboBoxModel;
+		this.typDefaultComboBoxModel = typDefaultComboBoxModel;
 		this.controller = controller;
 		addProperty();
 		setLayout(null);
-		
+
 		JLabel lblNewLabel = new JLabel("Adminbereich");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 18));
 		lblNewLabel.setBounds(252, 30, 136, 45);
 		add(lblNewLabel); // ins JPanel
-		
+
 		JLabel lblNumSch = new JLabel("Nummernschild:");
 		lblNumSch.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblNumSch.setBounds(60, 172, 120, 20);
 		add(lblNumSch);
-		
-		numSchEingabe = new JTextField();
-		numSchEingabe.setBounds(190, 170, 100, 30);
-		add(numSchEingabe);
-		numSchEingabe.setColumns(10);
 
-        JButton btnLoeschen = new JButton("Löschen");
-		btnLoeschen.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) 
-			{
-				 btnLoeschenActionPerformed(e);
-			}
-		});
+
+		fahrzeugJComboBox = new JComboBox<>(fahrzeugDefaultComboBoxModel);
+		fahrzeugJComboBox.setBounds(190, 170, 100, 30);
+		fahrzeugJComboBox.addActionListener(e->ViewParkhaus.selectFahrzeug(boxTyp,fahrzeugJComboBox));
+		fahrzeugJComboBox.setEditable(true);
+		add(fahrzeugJComboBox);
+
+
+		JButton btnLoeschen = new JButton("Löschen");
+		btnLoeschen.addActionListener(this::btnLoeschenActionPerformed);
 		btnLoeschen.setFont(new Font("Tahoma", Font.BOLD, 12));
 		btnLoeschen.setBounds(490, 168, 100, 30);
 		add(btnLoeschen);
 
-        JButton btnEinfuegen = new JButton("Einfügen");
-		btnEinfuegen.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) 
-			{
-				btnEinfuegenActionPerformed(e);
-			}
-		});
+		JButton btnEinfuegen = new JButton("Einfügen");
+		btnEinfuegen.addActionListener(this::btnEinfuegenActionPerformed);
 		btnEinfuegen.setFont(new Font("Tahoma", Font.BOLD, 12));
 		btnEinfuegen.setBounds(337, 168, 100, 30);
 		add(btnEinfuegen);
 
-        JButton btnZurueck = new JButton("Zurück");
-		btnZurueck.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) 
-			{
-				btnZuruekActionPerformed(e);
-			}
-		});
+		JButton btnZurueck = new JButton("Zurück");
+		btnZurueck.addActionListener(this::btnZuruekActionPerformed);
 		btnZurueck.setFont(new Font("Tahoma", Font.BOLD, 12));
 		btnZurueck.setBounds(60, 299, 100, 30);
 		add(btnZurueck);
-		
+
 		JButton btnAutoTabelle = new JButton("Autotabelle");
-		btnAutoTabelle.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) 
-			{
-				btnAutoTabelleActionPerformed(e);
-			}
-		});
+		btnAutoTabelle.addActionListener(this::btnAutoTabelleActionPerformed);
 		btnAutoTabelle.setFont(new Font("Tahoma", Font.BOLD, 12));
 		btnAutoTabelle.setBounds(475, 299, 115, 30);
 		add(btnAutoTabelle);
-		
+
 		lblInfo = new JLabel("");
 		lblInfo.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblInfo.setBorder(new LineBorder(new Color(0, 0, 0), 3));
 		lblInfo.setBounds(61, 230, 529, 30);
 		add(lblInfo);
 
-		
-		boxTyp = new JComboBox();
-		boxTyp.setModel(new DefaultComboBoxModel(new String[] {"Auto", "Motorrad"}));
+
+		boxTyp = new JComboBox<>(typDefaultComboBoxModel);
 		boxTyp.setFont(new Font("Tahoma", Font.BOLD, 14));
 		boxTyp.setBounds(190, 120, 100, 30);
 		add(boxTyp);
-		
+
+
+
 		JLabel lblNewLabel_1 = new JLabel("Fahrzeugtyp:");
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblNewLabel_1.setBounds(60, 125, 100, 20);
 		add(lblNewLabel_1);
-		
+
 		JButton btnParkplatzliste = new JButton("Parkplatztabelle");
-		btnParkplatzliste.addActionListener
-		(
-				new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-			{
-				btnParkplaetzeActionPerformed(e);
-			}
-				}
-		);
+		btnParkplatzliste.addActionListener(this::btnParkplaetzeActionPerformed);
 		btnParkplatzliste.setFont(new Font("Tahoma", Font.BOLD, 12));
 		btnParkplatzliste.setBounds(247, 299, 136, 30);
 		add(btnParkplatzliste);
-		
+
 		JSeparator separator = new JSeparator();
 		separator.setBounds(0, 85, 639, 2);
 		add(separator);
@@ -162,29 +142,41 @@ public class AdministrationsGui extends JPanel implements PropertyChangeListener
 	private void btnEinfuegenActionPerformed(ActionEvent e) 
 	{
 		lblInfo.setText("");
-		controller.fahrzeugRegistrieren(numSchEingabe.getText(),(String) boxTyp.getSelectedItem());
-		numSchEingabe.setText("");
-
-		boxTyp.setSelectedIndex(0);
+		Object getSelectedItem =fahrzeugJComboBox.getSelectedItem();
+		String selectedItem= getSelectedItem instanceof  Fahrzeug f ?  f.getNummernschild():(String) getSelectedItem;
+		String nummernschild = selectedItem != null ? selectedItem:"";
+		controller.fahrzeugRegistrieren(nummernschild,(String) boxTyp.getSelectedItem());
+		fahrzeugJComboBox.setSelectedItem(null);
+		controller.ladeFahrzeuge();
+		boxTyp.setSelectedItem(null);
 	}
 
 	private void btnZuruekActionPerformed(ActionEvent e) 
 	{
-		numSchEingabe.setText("");
 		controller.propertyChange(Ereignis.ZURUECK_HAUPTPANEL);
 		lblInfo.setText("");
 	}
 
 	private void btnLoeschenActionPerformed(ActionEvent e)
 	{
-		controller.loeschen(numSchEingabe.getText(), (String) boxTyp.getSelectedItem());
-		numSchEingabe.setText("");
-		boxTyp.setSelectedIndex(0);
+		Object getSelectedItem =fahrzeugJComboBox.getSelectedItem();
+		String selectedItem= getSelectedItem instanceof  Fahrzeug f ?  f.getNummernschild():(String) getSelectedItem;
+		String nummernschild = selectedItem != null ? selectedItem:"";
+		String typ = boxTyp.getSelectedItem() != null ? (String) boxTyp.getSelectedItem():"Fahrzeug";
+		controller.loeschen(nummernschild, typ);
+		boxTyp.setSelectedItem(null);
+		fahrzeugJComboBox.setSelectedItem(null);
+		controller.ladeFahrzeuge();
 	}
 
 	
-	public JLabel getLblInfo() {
+	protected JLabel getLblInfo() {
 		return lblInfo;
+	}
+
+	public void setLblInfoText(String text)
+	{
+		lblInfo.setText(text);
 	}
 
 

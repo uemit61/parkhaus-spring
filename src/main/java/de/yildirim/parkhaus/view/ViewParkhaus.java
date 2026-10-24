@@ -1,6 +1,7 @@
 package de.yildirim.parkhaus.view;
 
 import de.yildirim.parkhaus.controller.Controller;
+import de.yildirim.parkhaus.model.entity.Fahrzeug;
 import de.yildirim.parkhaus.model.event.Ereignis;
 
 import javax.swing.*;
@@ -32,13 +33,17 @@ public class ViewParkhaus implements PropertyChangeListener
 	private JLabel lblAnzahFrei;
 	private JButton btnAdmin;
 	private JButton btnBeenden;
-	private JComboBox boxTyp;
 	private AdministrationsGui adminView;
 	private JPanel tempPanel;
 	private JPanel parkplatzTabelle;
 	private JPanel autoTabelle;
-	private JTextField textnNummerschild;
+	private  JComboBox<Fahrzeug> fahrzeugJComboBox;
+	private  JComboBox<String> boxTyp;
+	private DefaultComboBoxModel<Fahrzeug> fahrzeugDefaultComboBoxModel;
+	private DefaultComboBoxModel<String> typDefaultComboBoxModel;
+
 	private JSeparator separator;
+
 
 	/**
 	 * Create the application.
@@ -62,6 +67,8 @@ public class ViewParkhaus implements PropertyChangeListener
 		controller.addPropertyListener(Ereignis.PANEL_TABELLE, this);
 		controller.addPropertyListener(Ereignis.ZURUECK_ADMIN_PANEL, this);
 		controller.addPropertyListener(Ereignis.PANEL_TABELLE_FAHRZEUG,this);
+		controller.addPropertyListener(Ereignis.FAHRZEUGE_GELADEN, this);
+		controller.addPropertyListener(Ereignis.TYPANGABE_FEHLT,this);
 	}
 	
 	
@@ -85,44 +92,31 @@ public class ViewParkhaus implements PropertyChangeListener
 		lblNumschild.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblNumschild.setBounds(50, 169, 120, 16);
 		frame.getContentPane().add(lblNumschild);
-		
-		textnNummerschild = new JTextField();
-		textnNummerschild.setBounds(190, 165, 100, 30);
-		frame.getContentPane().add(textnNummerschild);
-		textnNummerschild.setColumns(10);
-		
+
+
+		fahrzeugDefaultComboBoxModel = new DefaultComboBoxModel<>();
+		fahrzeugJComboBox = new JComboBox<>(fahrzeugDefaultComboBoxModel);
+		fahrzeugJComboBox.setBounds(190, 165, 100, 30);
+		fahrzeugJComboBox.setEditable(true);
+		fahrzeugJComboBox.addActionListener(e->ViewParkhaus.selectFahrzeug(boxTyp,fahrzeugJComboBox));
+		frame.getContentPane().add(fahrzeugJComboBox);
+
 		btnCheckin = new JButton("Checkin");
 		btnCheckin.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnCheckin.addActionListener(new ActionListener() 
-		{
-			public void actionPerformed(ActionEvent e) 
-			{
-				btnCheckinActionPerformed(e);
-			}
-		});
+		btnCheckin.addActionListener(this::btnCheckinActionPerformed);
 		btnCheckin.setBounds(340, 165, 100, 30);
 		frame.getContentPane().add(btnCheckin);
 		
 		btnCheckout = new JButton("Checkout");
 		btnCheckout.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnCheckout.addActionListener(new ActionListener() 
-		{
-			public void actionPerformed(ActionEvent e) 
-			{
-				btnCheckoutActionPerformed(e);
-			}
-		});
+		btnCheckout.addActionListener(this::btnCheckoutActionPerformed);
+
 		btnCheckout.setBounds(460, 165, 105, 30);
 		frame.getContentPane().add(btnCheckout);
 		
 		btnPosition = new JButton("Show Position");
 		btnPosition.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnPosition.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) 
-			{
-				btnPositionActionPerformed(e);
-			}
-		});
+		btnPosition.addActionListener(this::btnPositionActionPerformed);
 		btnPosition.setBounds(585, 165, 150, 30);
 		frame.getContentPane().add(btnPosition);
 		
@@ -144,30 +138,23 @@ public class ViewParkhaus implements PropertyChangeListener
 		lblFahrTyp.setBounds(50, 120, 120, 20);
 		frame.getContentPane().add(lblFahrTyp);
 		
-		boxTyp = new JComboBox();
+		boxTyp = new JComboBox<>();
+		typDefaultComboBoxModel = new DefaultComboBoxModel<>();
+		typDefaultComboBoxModel.addElement("Auto");
+		typDefaultComboBoxModel.addElement("Motorrad");
 		boxTyp.setFont(new Font("Tahoma", Font.BOLD, 14));
-		boxTyp.setModel(new DefaultComboBoxModel(new String[] {"Auto", "Motorrad"}));
+		boxTyp.setModel(typDefaultComboBoxModel);
 		boxTyp.setBounds(190, 113, 100, 30);
 		frame.getContentPane().add(boxTyp);
 		
 		btnAdmin = new JButton("Administration");
-		btnAdmin.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) 
-			{
-				btnAdminActionPerformed(e);
-			}
-		});
+		btnAdmin.addActionListener(this::btnAdminActionPerformed);
 		btnAdmin.setFont(new Font("Tahoma", Font.BOLD, 14));
 		btnAdmin.setBounds(50, 299, 150, 30);
 		frame.getContentPane().add(btnAdmin);
 		
 		btnBeenden = new JButton("Beenden");
-		btnBeenden.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) 
-			{
-				System.exit(0);
-			}
-		});
+		btnBeenden.addActionListener(e->System.exit(0));
 		btnBeenden.setFont(new Font("Tahoma", Font.BOLD, 14));
 		btnBeenden.setBounds(635, 299, 100, 30);
 		frame.getContentPane().add(btnBeenden);
@@ -183,51 +170,67 @@ public class ViewParkhaus implements PropertyChangeListener
 		lblAnzahFrei.setBounds(190, 66, 100, 30);
 		frame.getContentPane().add(lblAnzahFrei);
 
-		tempPanel = (JPanel) frame.getContentPane(); // ContentPane zwischen speichern
-
-
-		adminView = new AdministrationsGui(controller);
-		
-		parkplatzTabelle = new ParkplatzTabelle(controller);
-		
-		autoTabelle = new AutoTabelle(controller);
-		
-		
-		
 		JLabel lblNewLabel = new JLabel("");
 		lblNewLabel.setBorder(new LineBorder(new Color(0, 0, 0), 3));
 		lblNewLabel.setBounds(50, 228, 685, 45);
 		frame.getContentPane().add(lblNewLabel);
-		
+
 		separator = new JSeparator();
 		separator.setBounds(0, 54, 798, 2);
 		frame.getContentPane().add(separator);
+
+		tempPanel = (JPanel) frame.getContentPane(); // ContentPane zwischen speichern
+
+		adminView = new AdministrationsGui(controller,fahrzeugDefaultComboBoxModel,typDefaultComboBoxModel);
 		
-		controller.freiePlaetze();
+		parkplatzTabelle = new ParkplatzTabelle(controller);
+		
+		autoTabelle = new AutoTabelle(controller);
+
+		controller.ermittleFreiePlaetze();
+		controller.ladeFahrzeuge();
 	}
 
 	//ActionPErformed
+
+	protected static void selectFahrzeug(JComboBox<String> stringJComboBox,JComboBox<Fahrzeug> comboBox)
+	{
+		Object getSelectedItem = comboBox.getSelectedItem();
+		String selectedItem= getSelectedItem instanceof  Fahrzeug f ?  f.getTyp():null;
+		stringJComboBox.setSelectedItem(selectedItem);
+	}
 	private void btnCheckinActionPerformed(ActionEvent e)
 	{
-		controller.befahren(textnNummerschild.getText(),(String) boxTyp.getSelectedItem());
-		textnNummerschild.setText("");
-		boxTyp.setSelectedIndex(0);
+		Object getSelectedItem =fahrzeugJComboBox.getSelectedItem();
+		String selectedItem= getSelectedItem instanceof  Fahrzeug f ?  f.getNummernschild():(String) getSelectedItem;
+		String nummernschild = selectedItem != null ? selectedItem:"";
+		controller.befahren(nummernschild,(String) boxTyp.getSelectedItem());
+		fahrzeugJComboBox.setSelectedItem(null);
+		boxTyp.setSelectedItem(null);
+		controller.ladeFahrzeuge();
 	}
 	
 	private void btnCheckoutActionPerformed(ActionEvent e) 
 	{
 		lblInformation.setText("");
-		lblInformation_2.setText("");				
-		controller.verlassen(textnNummerschild.getText(),(String) boxTyp.getSelectedItem());
-		textnNummerschild.setText("");
-		boxTyp.setSelectedIndex(0);
+		lblInformation_2.setText("");
+		Object getSelectedItem =fahrzeugJComboBox.getSelectedItem();
+		String selectedItem= getSelectedItem instanceof  Fahrzeug f ?  f.getNummernschild():(String) getSelectedItem;
+		String nummernschild = selectedItem != null ? selectedItem:"";
+		controller.verlassen(nummernschild,(String) boxTyp.getSelectedItem());
+		fahrzeugJComboBox.setSelectedItem(null);
+		boxTyp.setSelectedItem(null);
+
 	}
 
-	private void btnPositionActionPerformed(ActionEvent e) 
+	private void btnPositionActionPerformed(ActionEvent e)
 	{
-		controller.zeigePos(textnNummerschild.getText());
-		textnNummerschild.setText("");
-		boxTyp.setSelectedIndex(0);
+		Object getSelectedItem =fahrzeugJComboBox.getSelectedItem();
+		String selectedItem= getSelectedItem instanceof  Fahrzeug f ?  f.getNummernschild():(String) getSelectedItem;
+		String nummernschild = selectedItem != null ? selectedItem:"";
+		controller.zeigePos(nummernschild);
+		fahrzeugJComboBox.setSelectedItem(null);
+		boxTyp.setSelectedItem(null);
 	}
 	
 
@@ -235,6 +238,8 @@ public class ViewParkhaus implements PropertyChangeListener
 	{
 		frame.setBounds(300,100,650,410);
 		adminView.getLblInfo().setText("");
+		fahrzeugJComboBox.setSelectedItem(null);
+		boxTyp.setSelectedItem(null);
 		frame.setContentPane(adminView);
 	}
 
@@ -256,16 +261,16 @@ public class ViewParkhaus implements PropertyChangeListener
             }
 			case KENNZEICHEN_NICHT_GEFUNDEN ->
             {
-                String numschild = (String) evt.getNewValue();
+                String nummernschild = (String) evt.getNewValue();
                 lblInformation.setText("");
-                lblInformation_2.setText("Das Fahrzeug '" + numschild + "' befindet sich nicht im Parkhaus.");
+                lblInformation_2.setText("Das Fahrzeug '" + nummernschild + "' befindet sich nicht im Parkhaus.");
 
             }
 			case PARKPLATZ_VERLASSEN ->
             {
-                String numschild = (String) evt.getNewValue();
+                String nummernschild = (String) evt.getNewValue();
                 lblInformation_2.setText("");
-                lblInformation.setText("Das Fahrzeug '" + numschild + "' hat das Parkhaus verlassen.");
+                lblInformation.setText("Das Fahrzeug '" + nummernschild + "' hat das Parkhaus verlassen.");
 
             }
 			case ZEIGE_POSITION ->
@@ -292,6 +297,8 @@ public class ViewParkhaus implements PropertyChangeListener
                 frame.setBounds(300, 100, 800, 400);
                 lblInformation_2.setText("");
                 lblInformation.setText("");
+				fahrzeugJComboBox.setSelectedItem(null);
+				boxTyp.setSelectedIndex(0);
                 frame.setContentPane(tempPanel); //wechselt tempPanel =getContentPane entspricht der (hauptpanel)
             }
 			case PANEL_TABELLE ->
@@ -306,6 +313,8 @@ public class ViewParkhaus implements PropertyChangeListener
                 frame.setBounds(300, 100, 650, 410);
                 lblInformation.setText("");
                 lblInformation_2.setText("");
+				fahrzeugJComboBox.setSelectedItem(null);
+				boxTyp.setSelectedIndex(0);
                 frame.setContentPane(adminView);
             }
 			case PANEL_TABELLE_FAHRZEUG ->
@@ -315,6 +324,22 @@ public class ViewParkhaus implements PropertyChangeListener
                 lblInformation.setText("");
                 frame.setContentPane(autoTabelle);
             }
+			case FAHRZEUGE_GELADEN ->
+			{
+				List<Fahrzeug> fahrzeugListe = (List<Fahrzeug>) evt.getNewValue();
+				fahrzeugDefaultComboBoxModel.removeAllElements();
+				fahrzeugDefaultComboBoxModel.addAll(fahrzeugListe);
+			}
+			case TYPANGABE_FEHLT ->
+			{
+				Boolean admin = (Boolean) evt.getNewValue();
+				String fehler= "Typangabe fehlt!";
+				if(admin)
+					adminView.setLblInfoText(fehler);
+				else
+					lblInformation_2.setText(fehler);
+
+			}
         }
 	}
 }
