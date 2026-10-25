@@ -25,11 +25,11 @@ public class PropertyChangeHandle
      * Meldet eine View für ein bestimmtes Ereignis an.
      *
      * @param propName Name des Ereignisses, zum Beispiel "Alarm"
-     * @param pcl      die View, die darauf reagieren soll
+     * @param view      die View, die darauf reagieren soll
      */
-    public void addPropertyChangeListener(Ereignis propName, PropertyChangeListener pcl)
+    public void addPropertyChangeListener(Ereignis propName, PropertyChangeListener view)
     {
-        support.addPropertyChangeListener(propName.name(), pcl);
+        support.addPropertyChangeListener(propName.name(), view);
     }
 
     /**
