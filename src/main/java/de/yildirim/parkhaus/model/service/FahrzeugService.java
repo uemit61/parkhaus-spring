@@ -137,26 +137,23 @@ public class FahrzeugService
     public void loescheFahrzeug(String nummernschild, String typ)
     {
         nummernschild = nummernschild.toUpperCase(Locale.ROOT);
-        if (FahrzeugService.istGueltigesKennzeichen(nummernschild))
+        if (istGueltigesKennzeichen(nummernschild))
         {
             String[] props = new String[2];
             props[0] = nummernschild;
             props[1] = typ;
 
-
             if (!garageRepository.existsByFahrzeug_Nummernschild(nummernschild))
             {
-                if(fahrzeugRepository.existsById(nummernschild))
+                if (fahrzeugRepository.deleteByNummernschildAndTyp(nummernschild, typ) != 0)
                 {
-                    if (fahrzeugRepository.deleteByNummernschildAndTyp(nummernschild, typ) != 0)
-                        pch.propertyChange(Ereignis.FAHRZEUG_GELOESCHT, props);
-                    else
-                        pch.propertyChange(Ereignis.ALARM,null);
+                    pch.propertyChange(Ereignis.FAHRZEUG_GELOESCHT, props);
                 }
                 else
                     pch.propertyChange(Ereignis.FAHRZEUG_LOESCHEN_FEHLGESCHLAGEN, props);
             }
             else
+                // Löschenverboten Fahrzeug muss vorher ausgecheckt werden.
                 pch.propertyChange(Ereignis.LOESCHEN_VERBOTEN, nummernschild);
         }
         else

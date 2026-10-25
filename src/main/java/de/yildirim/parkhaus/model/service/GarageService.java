@@ -80,7 +80,6 @@ public class GarageService
             pch.propertyChange(Ereignis.TYPANGABE_FEHLT,false);
         else if (FahrzeugService.istGueltigesKennzeichen(nummernschild))
         {
-
             if (garageRepository.existsByFahrzeug_Nummernschild(nummernschild) ||
                     (!fahrzeugService.fahrzeugRegistrieren(nummernschild, typ, false) &&
                             !fahrzeugRepository.existsByNummernschildAndTyp(nummernschild, typ)))
