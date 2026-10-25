@@ -55,6 +55,14 @@ class GarageRepositoryTest
         this.em = em;
     }
 
+    // Kein GoTO, sondern eher ein ComeTo: es springt vor jedem Test hier hoch und parkt das Auto,
+    // daher kein wiederholtes Parken in den Tests.
+    @BeforeEach
+    void aufbau()
+    {
+        parke("HH-AB 123","Auto",3,1);
+    }
+
     /**
      * Legt ein Fahrzeug an und stellt es auf einen Platz.
      *
@@ -72,13 +80,7 @@ class GarageRepositoryTest
         em.persist(new Garage(platzNr, etage, fahrzeug));
     }
 
-    // Kein GoTO, sondern eher ein ComeTo: es springt vor jedem Test hier hoch und parkt das Auto,
-    // daher kein wiederholtes Parken in den Tests.
-    @BeforeEach
-    void aufbau()
-    {
-        parke("HH-AB 123","Auto",3,1);
-    }
+
 
     @Test
     @DisplayName("findByFahrzeug_Nummernschild liefert eine leere Liste, wenn das Fahrzeug nicht parkt")
