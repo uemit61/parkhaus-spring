@@ -3,6 +3,7 @@ package de.yildirim.parkhaus.model.service;
 import de.yildirim.parkhaus.model.entity.Fahrzeug;
 import de.yildirim.parkhaus.model.entity.Garage;
 import de.yildirim.parkhaus.model.entity.Parketage;
+import de.yildirim.parkhaus.model.event.Ereignis;
 import de.yildirim.parkhaus.model.event.PropertyChangeHandle;
 import de.yildirim.parkhaus.model.repository.FahrzeugRepository;
 import de.yildirim.parkhaus.model.repository.GarageRepository;
@@ -24,8 +25,7 @@ import java.util.List;
 import static de.yildirim.parkhaus.model.event.Ereignis.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Prüft die Fachlogik von {@link GarageService}: Einfahrt, Ausfahrt, Positionsabfrage
@@ -82,7 +82,7 @@ public class GarageServiceTest
     private ParketageRepository parketageRepository;
     @Mock
     private FahrzeugRepository fahrzeugRepository;
-    @Mock
+@Mock
     private FahrzeugService fahrzeugService;
 
     private GarageService garageService;
@@ -97,7 +97,6 @@ public class GarageServiceTest
         support.addPropertyChangeListener(propList::add);
 
         garageService = new GarageService(garageRepository, parketageRepository, fahrzeugRepository, new PropertyChangeHandle(support), fahrzeugService);
-
 
     }
 
@@ -140,9 +139,8 @@ public class GarageServiceTest
      */
     @Test
     @DisplayName("Fahrzeug verlässt Parkhaus, ein" + " ungültiges Kennzeichen wird eingegeben")
-    void verlassenFailCheck()
+    void verlassenKennzeichenUngueltig()
     {
-
         // Falsches Kennzeichen
         String nummernschild = "AB-CDEF 123456";
         String typ = "Auto";
@@ -296,6 +294,49 @@ public class GarageServiceTest
 
     //Methode befahren() testen
 
+    @Test
+    @DisplayName("Wenn kein Typ ausgewählt ist, kann das auto nicht registriert werden.")
+    void befahrenKeineTypangabe()
+    {
+        String nummernschild = "TT-TS 61";
+        garageService.befahren(nummernschild,null);
+        assertEquals(1,propList.size(), "genau eine Meldung wird erwartet");
+        assertEquals(TYPANGABE_FEHLT.name(),getProp().getPropertyName(),"Sollte 'TYPANGABE_FEHLT' melden");
+
+    }
+
+    @Test
+    @DisplayName("Wenn kein Typ ausgewählt ist, folgt die entsprechende Warnung.")
+    void verlassenKeineTypangabe()
+    {
+        String nummernschild = "TT-TS 61";
+        garageService.verlassen(nummernschild,null);
+        assertEquals(1,propList.size(), "genau eine Meldung wird erwartet");
+        assertEquals(TYPANGABE_FEHLT.name(),getProp().getPropertyName(),"Sollte 'TYPANGABE_FEHLT' melden");
+    }
+
+    @Test
+    @DisplayName("Wenn kein Typ ausgewählt ist, und auch das Kennzeichen falsch ist," +
+            " wird angezeigt, dass die Typangabe fehlt.")
+    void befahrenKeineTypangabeUndFalschesKennzeichen()
+    {
+        String nummernschild = "TT3-T2S 61";
+        garageService.befahren(nummernschild,null);
+        assertEquals(1,propList.size(), "genau eine Meldung wird erwartet");
+        assertEquals(TYPANGABE_FEHLT.name(),getProp().getPropertyName(),"Sollte 'TYPANGABE_FEHLT' melden");
+    }
+
+    @Test
+    @DisplayName("Wenn kein Typ ausgewählt ist, und auch das Kennzeichen falsch ist," +
+            " wird angezeigt, dass die Typangabe fehlt.")
+    void verlassenKeineTypangabeUndFalschesKennzeichen()
+    {
+        String nummernschild = "TT3-T2S 61";
+        garageService.befahren(nummernschild,null);
+        assertEquals(1,propList.size(), "genau eine Meldung wird erwartet");
+        assertEquals(TYPANGABE_FEHLT.name(),getProp().getPropertyName(),"Sollte 'TYPANGABE_FEHLT' melden");
+
+    }
     /**
      * Ungültiges Kennzeichen bei der Einfahrt: gemeldet, ohne jeden Zugriff.
      *
@@ -345,7 +386,7 @@ public class GarageServiceTest
         garageService.befahren(nummernschild,typ);
 
         assertEquals(1,propList.size(), "genau eine Meldung wird erwartet");
-        assertEquals(ALARM.name(),getProp().getPropertyName(),"Sollte 'Alarm' melden");
+        assertEquals(ALARM.name(),getProp().getPropertyName(),"Sollte 'ALARM' melden");
 
     }
 
@@ -415,9 +456,10 @@ public class GarageServiceTest
         //Ein Fahrzeug will das volle Parkhaus befahren.
         String nummernschild = "TT-TS 6161";
         String typ = "Auto";
-        when(fahrzeugService.fahrzeugRegistrieren(nummernschild,typ,false)).thenReturn(true);
-        garageService.befahren(nummernschild, typ);
+        when(garageRepository.existsByFahrzeug_Nummernschild(nummernschild)).thenReturn(false);
+        when(fahrzeugService.fahrzeugRegistrieren(nummernschild, typ, false)).thenReturn(true);
 
+        garageService.befahren(nummernschild, typ);
         assertEquals(1,propList.size(), "genau eine Meldung wird erwartet");
         assertEquals(PARKPLATZ_VOLL.name() ,getProp().getPropertyName(),"Sollte 'Voll' melden");
     }
