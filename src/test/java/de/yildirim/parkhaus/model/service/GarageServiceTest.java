@@ -82,7 +82,7 @@ public class GarageServiceTest
     private ParketageRepository parketageRepository;
     @Mock
     private FahrzeugRepository fahrzeugRepository;
-@Mock
+    @Mock
     private FahrzeugService fahrzeugService;
 
     private GarageService garageService;

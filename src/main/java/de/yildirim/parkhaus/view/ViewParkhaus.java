@@ -10,7 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+
 import java.util.List;
 
 import static de.yildirim.parkhaus.model.event.Ereignis.ALARM;
@@ -21,31 +21,23 @@ import static de.yildirim.parkhaus.model.event.Ereignis.ALARM;
  * @copyright   Copyright (c) 2024-2026 Ümit Yildirim. Alle Rechte vorbehalten.
  * @license     Diese Datei darf nicht ohne Zustimmung des Autors weitergegeben oder verändert werden.
  */
-public class ViewParkhaus implements PropertyChangeListener
+public class ViewParkhaus
 {
 	private JFrame frame;
-	private JButton btnCheckin;
-	private JButton btnPosition;
-	private JButton btnCheckout;
-	private Controller controller = null;
+    private Controller controller = null;
 	private JLabel lblInformation;
 	private JLabel lblInformation_2;
-	private JLabel lblAnzahFrei;
-	private JButton btnAdmin;
-	private JButton btnBeenden;
-	private AdministrationsGui adminView;
+	private JLabel lblAnzahlFrei;
+    private AdministrationsGui adminView;
 	private JPanel tempPanel;
 	private JPanel parkplatzTabelle;
-	private JPanel autoTabelle;
-	private  JComboBox<Fahrzeug> fahrzeugJComboBox;
+    private  JComboBox<Fahrzeug> fahrzeugJComboBox;
 	private  JComboBox<String> boxTyp;
 	private DefaultComboBoxModel<Fahrzeug> fahrzeugDefaultComboBoxModel;
 	private DefaultComboBoxModel<String> typDefaultComboBoxModel;
 
-	private JSeparator separator;
 
-
-	/**
+    /**
 	 * Create the application.
 	 */
 	public ViewParkhaus(Controller controller) 
@@ -56,22 +48,120 @@ public class ViewParkhaus implements PropertyChangeListener
 
 	public void addPropertys()
 	{
-		controller.addPropertyListener(ALARM, this);
-		controller.addPropertyListener(Ereignis.KENNZEICHEN_NICHT_GEFUNDEN, this);
-		controller.addPropertyListener(Ereignis.PARKPLATZ_VERLASSEN,this);
-		controller.addPropertyListener(Ereignis.ZEIGE_POSITION, this);
-		controller.addPropertyListener(Ereignis.PARKPLATZ_VOLL, this);
-		controller.addPropertyListener(Ereignis.FREIE_PLAETZE, this);
-		controller.addPropertyListener(Ereignis.ZURUECK_HAUPTPANEL, this);
-		controller.addPropertyListener(Ereignis.KENNZEICHEN_UNGUELTIG,this);
-		controller.addPropertyListener(Ereignis.PANEL_TABELLE, this);
-		controller.addPropertyListener(Ereignis.ZURUECK_ADMIN_PANEL, this);
-		controller.addPropertyListener(Ereignis.PANEL_TABELLE_FAHRZEUG,this);
-		controller.addPropertyListener(Ereignis.FAHRZEUGE_GELADEN, this);
-		controller.addPropertyListener(Ereignis.TYPANGABE_FEHLT,this);
+		controller.addPropertyListener(Ereignis.ALARM, this::alarm);
+		controller.addPropertyListener(Ereignis.KENNZEICHEN_NICHT_GEFUNDEN, evt->kennzeichenNichtGefunden((String) evt.getNewValue()));
+		controller.addPropertyListener(Ereignis.PARKPLATZ_VERLASSEN,evt->parkplatzVerlassen((String) evt.getNewValue()));
+		controller.addPropertyListener(Ereignis.ZEIGE_POSITION, this::zeigePosition);
+		controller.addPropertyListener(Ereignis.PARKPLATZ_VOLL, this::parkplatzVoll);
+		controller.addPropertyListener(Ereignis.FREIE_PLAETZE, evt->freiePlaetze((int) evt.getNewValue()));
+		controller.addPropertyListener(Ereignis.ZURUECK_HAUPTPANEL, this::zurueckHauptpanel);
+		controller.addPropertyListener(Ereignis.KENNZEICHEN_UNGUELTIG,evt->kennzeichenUngueltig((String) evt.getNewValue()));
+		controller.addPropertyListener(Ereignis.PANEL_TABELLE, this::panelTabelle);
+		controller.addPropertyListener(Ereignis.ZURUECK_ADMIN_PANEL, this::zurueckAdminPanel);
+		controller.addPropertyListener(Ereignis.PANEL_TABELLE_FAHRZEUG,this::panelTabelleFahrzeug);
+		controller.addPropertyListener(Ereignis.FAHRZEUGE_GELADEN, this::fahrzeugGeladen);
+		controller.addPropertyListener(Ereignis.TYPANGABE_FEHLT,evt->typangabeFehlt((boolean) evt.getNewValue()));
 	}
-	
-	
+
+	private void alarm(PropertyChangeEvent propertyChangeEvent)
+	{
+		lblInformation.setText("Ein Auto mit dem selben Nummernschild befindet sich im Parkhaus.");
+		lblInformation_2.setText("Wegfahrsperre wurde aktiviert. Bitte informieren Sie die Polizei!");
+	}
+
+	private void typangabeFehlt(boolean admin)
+	{
+		String fehler= "Typangabe fehlt!";
+		if(admin)
+			adminView.setLblInfoText(fehler);
+		else
+			lblInformation_2.setText(fehler);
+
+	}
+
+	@SuppressWarnings("unchecked")
+	private void fahrzeugGeladen(PropertyChangeEvent evt)
+	{
+		List<Fahrzeug> fahrzeugliste = (List<Fahrzeug>) evt.getNewValue();
+		fahrzeugDefaultComboBoxModel.removeAllElements();
+		fahrzeugDefaultComboBoxModel.addAll(fahrzeugliste);
+	}
+
+	private void panelTabelleFahrzeug(PropertyChangeEvent evt)
+	{
+		frame.setBounds(300, 100, 590, 590);
+		lblInformation_2.setText("");
+		lblInformation.setText("");
+		frame.setContentPane(parkplatzTabelle);
+	}
+
+	private void zurueckAdminPanel(PropertyChangeEvent propertyChangeEvent)
+	{
+		frame.setBounds(300, 100, 650, 410);
+		lblInformation.setText("");
+		lblInformation_2.setText("");
+		fahrzeugJComboBox.setSelectedItem(null);
+		boxTyp.setSelectedIndex(0);
+		frame.setContentPane(adminView);
+	}
+
+	private void panelTabelle(PropertyChangeEvent propertyChangeEvent)
+	{
+		frame.setBounds(300, 100, 590, 590);
+		lblInformation_2.setText("");
+		lblInformation.setText("");
+		frame.setContentPane(parkplatzTabelle);
+	}
+
+	private void kennzeichenUngueltig(String nummernschild)
+	{
+		lblInformation.setText("");
+		lblInformation_2.setText("Falsche Eingabe. Das Nummernschild '" + nummernschild+ "' hat ein falsches Format. ");
+	}
+
+	private void zurueckHauptpanel(PropertyChangeEvent propertyChangeEvent)
+	{
+		frame.setBounds(300, 100, 800, 400);
+		lblInformation_2.setText("");
+		lblInformation.setText("");
+		fahrzeugJComboBox.setSelectedItem(null);
+		boxTyp.setSelectedIndex(0);
+		frame.setContentPane(tempPanel); //wechselt tempPanel =getContentPane entspricht der (hauptpanel)
+
+	}
+
+	private void freiePlaetze(int frei)
+	{
+		lblAnzahlFrei.setText("" + frei);
+	}
+
+	private void parkplatzVoll(PropertyChangeEvent propertyChangeEvent)
+	{
+		lblInformation_2.setText("Parkplatz ist VOLL.");
+		lblInformation.setText("");
+	}
+
+	@SuppressWarnings("unchecked")
+	private void zeigePosition(PropertyChangeEvent evt)
+	{
+		List<Object> position =(List<Object>) evt.getNewValue();
+		lblInformation_2.setText("");
+		lblInformation.setText("Der Parkplatz vom " + position.getFirst() + " '" + position.get(1) + "' befindet sich auf der Etage " + position.get(2) + " auf Platz " + position.get(3));
+	}
+
+	private void parkplatzVerlassen(String nummernschild)
+	{
+		lblInformation_2.setText("");
+		lblInformation.setText("Das Fahrzeug '" + nummernschild + "' hat das Parkhaus verlassen.");
+	}
+
+	private void kennzeichenNichtGefunden(String nummernschild)
+	{
+		lblInformation.setText("");
+		lblInformation_2.setText("Das Fahrzeug '" + nummernschild + "' befindet sich nicht im Parkhaus.");
+	}
+
+
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -101,20 +191,20 @@ public class ViewParkhaus implements PropertyChangeListener
 		fahrzeugJComboBox.addActionListener(e->ViewParkhaus.selectFahrzeug(boxTyp,fahrzeugJComboBox));
 		frame.getContentPane().add(fahrzeugJComboBox);
 
-		btnCheckin = new JButton("Checkin");
+        JButton btnCheckin = new JButton("Checkin");
 		btnCheckin.setFont(new Font("Tahoma", Font.BOLD, 14));
 		btnCheckin.addActionListener(this::btnCheckinActionPerformed);
 		btnCheckin.setBounds(340, 165, 100, 30);
 		frame.getContentPane().add(btnCheckin);
-		
-		btnCheckout = new JButton("Checkout");
+
+        JButton btnCheckout = new JButton("Checkout");
 		btnCheckout.setFont(new Font("Tahoma", Font.BOLD, 14));
 		btnCheckout.addActionListener(this::btnCheckoutActionPerformed);
 
 		btnCheckout.setBounds(460, 165, 105, 30);
 		frame.getContentPane().add(btnCheckout);
-		
-		btnPosition = new JButton("Show Position");
+
+        JButton btnPosition = new JButton("Show Position");
 		btnPosition.setFont(new Font("Tahoma", Font.BOLD, 14));
 		btnPosition.addActionListener(this::btnPositionActionPerformed);
 		btnPosition.setBounds(585, 165, 150, 30);
@@ -146,14 +236,14 @@ public class ViewParkhaus implements PropertyChangeListener
 		boxTyp.setModel(typDefaultComboBoxModel);
 		boxTyp.setBounds(190, 113, 100, 30);
 		frame.getContentPane().add(boxTyp);
-		
-		btnAdmin = new JButton("Administration");
+
+        JButton btnAdmin = new JButton("Administration");
 		btnAdmin.addActionListener(this::btnAdminActionPerformed);
 		btnAdmin.setFont(new Font("Tahoma", Font.BOLD, 14));
 		btnAdmin.setBounds(50, 299, 150, 30);
 		frame.getContentPane().add(btnAdmin);
-		
-		btnBeenden = new JButton("Beenden");
+
+        JButton btnBeenden = new JButton("Beenden");
 		btnBeenden.addActionListener(e->System.exit(0));
 		btnBeenden.setFont(new Font("Tahoma", Font.BOLD, 14));
 		btnBeenden.setBounds(635, 299, 100, 30);
@@ -164,18 +254,18 @@ public class ViewParkhaus implements PropertyChangeListener
 		lblFreiePlatz.setBounds(50, 66, 122, 30);
 		frame.getContentPane().add(lblFreiePlatz);
 		
-		lblAnzahFrei = new JLabel("...");
-		lblAnzahFrei.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblAnzahFrei.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblAnzahFrei.setBounds(190, 66, 100, 30);
-		frame.getContentPane().add(lblAnzahFrei);
+		lblAnzahlFrei = new JLabel("...");
+		lblAnzahlFrei.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblAnzahlFrei.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblAnzahlFrei.setBounds(190, 66, 100, 30);
+		frame.getContentPane().add(lblAnzahlFrei);
 
 		JLabel lblNewLabel = new JLabel("");
 		lblNewLabel.setBorder(new LineBorder(new Color(0, 0, 0), 3));
 		lblNewLabel.setBounds(50, 228, 685, 45);
 		frame.getContentPane().add(lblNewLabel);
 
-		separator = new JSeparator();
+        JSeparator separator = new JSeparator();
 		separator.setBounds(0, 54, 798, 2);
 		frame.getContentPane().add(separator);
 
@@ -184,8 +274,8 @@ public class ViewParkhaus implements PropertyChangeListener
 		adminView = new AdministrationsGui(controller,fahrzeugDefaultComboBoxModel,typDefaultComboBoxModel);
 		
 		parkplatzTabelle = new ParkplatzTabelle(controller);
-		
-		autoTabelle = new AutoTabelle(controller);
+
+        JPanel autoTabelle = new AutoTabelle(controller);
 
 		controller.ermittleFreiePlaetze();
 		controller.ladeFahrzeuge();
@@ -243,103 +333,4 @@ public class ViewParkhaus implements PropertyChangeListener
 		frame.setContentPane(adminView);
 	}
 
-
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) 
-	{
-        switch (Ereignis.valueOf(evt.getPropertyName()))
-        {
-            case ALARM ->
-            {
-                lblInformation.setText("Ein Auto mit dem selben Nummernschild befindet sich im Parkhaus.");
-                lblInformation_2.setText("Wegfahrsperre wurde aktiviert. Bitte informieren Sie die Polizei!");
-            }
-			case PARKPLATZ_VOLL ->
-            {
-                lblInformation_2.setText("Parkplatz ist VOLL.");
-                lblInformation.setText("");
-            }
-			case KENNZEICHEN_NICHT_GEFUNDEN ->
-            {
-                String nummernschild = (String) evt.getNewValue();
-                lblInformation.setText("");
-                lblInformation_2.setText("Das Fahrzeug '" + nummernschild + "' befindet sich nicht im Parkhaus.");
-
-            }
-			case PARKPLATZ_VERLASSEN ->
-            {
-                String nummernschild = (String) evt.getNewValue();
-                lblInformation_2.setText("");
-                lblInformation.setText("Das Fahrzeug '" + nummernschild + "' hat das Parkhaus verlassen.");
-
-            }
-			case ZEIGE_POSITION ->
-            {
-				@SuppressWarnings("unchecked")
-                List<Object> position = (List<Object>) evt.getNewValue();
-                lblInformation_2.setText("");
-                lblInformation.setText("Der Parkplatz vom " + position.getFirst() + " '" + position.get(1) + "' befindet sich auf der Etage " + position.get(2) + " auf Platz " + position.get(3));
-            }
-			case FREIE_PLAETZE ->
-            {
-                int frei = 0;
-                frei = (int) evt.getNewValue();
-                lblAnzahFrei.setText("" + frei);
-            }
-			case KENNZEICHEN_UNGUELTIG ->
-            {
-                String numSchild = (String) evt.getNewValue();
-                lblInformation.setText("");
-                lblInformation_2.setText("Falsche Eingabe. Das Nummernschild '" + numSchild + "' hat ein falsches Format. ");
-            }
-			case ZURUECK_HAUPTPANEL ->
-            {
-                frame.setBounds(300, 100, 800, 400);
-                lblInformation_2.setText("");
-                lblInformation.setText("");
-				fahrzeugJComboBox.setSelectedItem(null);
-				boxTyp.setSelectedIndex(0);
-                frame.setContentPane(tempPanel); //wechselt tempPanel =getContentPane entspricht der (hauptpanel)
-            }
-			case PANEL_TABELLE ->
-            {
-                frame.setBounds(300, 100, 590, 590);
-                lblInformation_2.setText("");
-                lblInformation.setText("");
-                frame.setContentPane(parkplatzTabelle);
-            }
-			case ZURUECK_ADMIN_PANEL ->
-            {
-                frame.setBounds(300, 100, 650, 410);
-                lblInformation.setText("");
-                lblInformation_2.setText("");
-				fahrzeugJComboBox.setSelectedItem(null);
-				boxTyp.setSelectedIndex(0);
-                frame.setContentPane(adminView);
-            }
-			case PANEL_TABELLE_FAHRZEUG ->
-            {
-                frame.setBounds(300, 100, 590, 590);
-                lblInformation_2.setText("");
-                lblInformation.setText("");
-                frame.setContentPane(autoTabelle);
-            }
-			case FAHRZEUGE_GELADEN ->
-			{
-				List<Fahrzeug> fahrzeugListe = (List<Fahrzeug>) evt.getNewValue();
-				fahrzeugDefaultComboBoxModel.removeAllElements();
-				fahrzeugDefaultComboBoxModel.addAll(fahrzeugListe);
-			}
-			case TYPANGABE_FEHLT ->
-			{
-				Boolean admin = (Boolean) evt.getNewValue();
-				String fehler= "Typangabe fehlt!";
-				if(admin)
-					adminView.setLblInfoText(fehler);
-				else
-					lblInformation_2.setText(fehler);
-
-			}
-        }
-	}
 }
