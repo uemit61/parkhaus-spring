@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,18 +17,17 @@ import java.util.List;
  * @copyright   Copyright (c) 2024-2026 Ümit Yildirim. Alle Rechte vorbehalten.
  * @license     Diese Datei darf nicht ohne Zustimmung des Autors weitergegeben oder verändert werden.
  */
-public class ParkplatzTabelle extends JPanel implements PropertyChangeListener
+public class ParkplatzTabelle extends JPanel
 {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 	private Controller controller = null;
-	private JButton btnZuruck;
-	private JTable table;
-	private GarageTableModel garageTableModel;
+    private final GarageTableModel garageTableModel;
 
 	public void addProperty()
 	{
-		controller.addPropertyListener(Ereignis.PARKPLATZ_TABELLE, this);
+		controller.addPropertyListener(Ereignis.PARKPLATZ_TABELLE, this::zeigeParkplaetze);
 	}
 	/**
 	 * Create the panel.
@@ -38,8 +38,8 @@ public class ParkplatzTabelle extends JPanel implements PropertyChangeListener
 		this.controller = controller;
 		addProperty();
 		setLayout(null);
-		
-		btnZuruck = new JButton("Zurück");
+
+        JButton btnZuruck = new JButton("Zurück");
 		btnZuruck.addActionListener(this::btnZuruckActionPerformed);
 		btnZuruck.setFont(new Font("Tahoma", Font.BOLD, 14));
 		btnZuruck.setBounds(60, 50, 85, 30);
@@ -48,8 +48,8 @@ public class ParkplatzTabelle extends JPanel implements PropertyChangeListener
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(60, 114, 420, 391);
 		add(scrollPane);
-		
-		table = new JTable();
+
+        JTable table = new JTable();
 		garageTableModel = new GarageTableModel(new ArrayList<>());
 		table.setModel(garageTableModel);
 		scrollPane.setViewportView(table);
@@ -57,11 +57,12 @@ public class ParkplatzTabelle extends JPanel implements PropertyChangeListener
 
 	private void btnZuruckActionPerformed(ActionEvent e) 
 	{
+
 		controller.propertyChange(Ereignis.ZURUECK_ADMIN_PANEL);
 	}
 	
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) 
+	@SuppressWarnings("unchecked")
+	public void zeigeParkplaetze(PropertyChangeEvent evt)
 	{
 		List<Garage> garageList = (List<Garage>) evt.getNewValue();
 		garageTableModel.updateTable(garageList);
