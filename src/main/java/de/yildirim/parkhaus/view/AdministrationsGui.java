@@ -3,6 +3,7 @@ package de.yildirim.parkhaus.view;
 import de.yildirim.parkhaus.controller.Controller;
 import de.yildirim.parkhaus.model.entity.Fahrzeug;
 import de.yildirim.parkhaus.model.event.Ereignis;
+import de.yildirim.parkhaus.model.event.FahrzeugInfo;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -34,9 +35,9 @@ public class AdministrationsGui extends JPanel
     public void addProperty()
     {
         controller.addPropertyListener(Ereignis.KENNZEICHEN_UNGUELTIG, evt -> zeigeFormatFehler((String) evt.getNewValue()));
-        controller.addPropertyListener(Ereignis.REGISTRIERT, evt -> zeigeRegistriert((String[]) evt.getNewValue()));
-        controller.addPropertyListener(Ereignis.FAHRZEUG_GELOESCHT, evt -> zeigeGeloescht((String[]) evt.getNewValue()));
-        controller.addPropertyListener(Ereignis.FAHRZEUG_LOESCHEN_FEHLGESCHLAGEN, evt -> zeigeLoeschenFehlgeschlagen((String[]) evt.getNewValue()));
+        controller.addPropertyListener(Ereignis.REGISTRIERT, evt -> zeigeRegistriert((FahrzeugInfo) evt.getNewValue()));
+        controller.addPropertyListener(Ereignis.FAHRZEUG_GELOESCHT, evt -> zeigeGeloescht((FahrzeugInfo) evt.getNewValue()));
+        controller.addPropertyListener(Ereignis.FAHRZEUG_LOESCHEN_FEHLGESCHLAGEN, evt -> zeigeLoeschenFehlgeschlagen((FahrzeugInfo) evt.getNewValue()));
         controller.addPropertyListener(Ereignis.LOESCHEN_VERBOTEN, evt -> zeigeLoeschenVerboten((String) evt.getNewValue()));
         controller.addPropertyListener(Ereignis.SCHON_REGISTRIERT, evt -> zeigeSchonRegistriert((String) evt.getNewValue()));
     }
@@ -185,19 +186,19 @@ public class AdministrationsGui extends JPanel
         setLblInfoText("Das Nummernschild '" + nummernschild + "' hat ein falsches Format.");
     }
 
-    private void zeigeRegistriert(String[] pos)
+    private void zeigeRegistriert(FahrzeugInfo  fahrzeugInfo)
     {
-        setLblInfoText("Das " + pos[1] + " '" + pos[0] + "' wurde registriert.");
+        setLblInfoText("Das " + fahrzeugInfo.typ() + " '" + fahrzeugInfo.nummernschild() + "' wurde registriert.");
     }
 
-    private void zeigeGeloescht(String[] pos)
+    private void zeigeGeloescht(FahrzeugInfo fahrzeugInfo)
     {
-        setLblInfoText("Das " + pos[1] + " '" + pos[0] + "' wurde gelöscht");
+        setLblInfoText("Das " + fahrzeugInfo.typ() + " '" + fahrzeugInfo.nummernschild() + "' wurde gelöscht");
     }
 
-    private void zeigeLoeschenFehlgeschlagen(String[] pos)
+    private void zeigeLoeschenFehlgeschlagen(FahrzeugInfo fahrzeugInfo)
     {
-        setLblInfoText("Das " + pos[1] + " '" + pos[0] + "' ist nicht registriert.");
+        setLblInfoText("Das " + fahrzeugInfo.typ() + " '" + fahrzeugInfo.nummernschild() + "' ist nicht registriert.");
     }
 
     private void zeigeLoeschenVerboten(String nummernschild)
