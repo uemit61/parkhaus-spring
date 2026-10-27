@@ -29,8 +29,10 @@ package de.yildirim.parkhaus.model.event;
  * <p>Die Typsicherheit endet am Kanal: {@link java.beans.PropertyChangeSupport}
  * kennt nur Zeichenketten, übertragen wird also {@link Enum#name()}. Niemand
  * tippt den Namen mehr von Hand, aber beim Empfänger kommt weiterhin ein
- * {@code String} an. Diese letzte Lücke schließt erst der Umstieg auf Springs
- * Ereignismechanismus mit typisierten Nutzdaten (v1.2).
+ * {@code String} an. Die Nutzdaten sind seit v1.2 typisiert - sie reisen als
+ * Records wie {@link Position} oder {@link FahrzeugInfo}. Offen bleibt der Kanal
+ * selbst: Erst mit Springs Ereignismechanismus (v1.3) wird der Typ des
+ * Ereignisses zum Verteilungsschlüssel - und dieses Enum damit überflüssig.
  *
  * @author      Ümit Yildirim <uemit611@outlook.de>
  * @copyright   Copyright (c) 2026 Ümit Yildirim. Alle Rechte vorbehalten.
