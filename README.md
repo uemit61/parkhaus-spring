@@ -151,30 +151,54 @@ v1.0 ist bewusst klein geschnitten: Swing-Oberfläche auf Spring-Datenschicht,
 sonst nichts. Dass die Oberfläche dabei unverändert bleibt, ist der Punkt dieser
 Version — erst dadurch ist belegt, dass die Fachschicht für sich steht.
 
-Die folgenden Versionen bauen jeweils eine Schicht darauf auf, ohne die darunter
+Jede folgende Version baut eine Schicht darauf auf, ohne die darunter
 anzufassen:
 
-### v1.1 — Typisierung und Auswahllisten
+### v1.1 — Typisierung und Auswahllisten *(erledigt)*
 
-Die Ereignisnamen werden von Zeichenketten zu einem `enum`. Heute ist ein
+Die Ereignisnamen sind von Zeichenketten zu einem `enum` geworden. Vorher war ein
 Vertipper in `"ZeigePos"` kein Übersetzungsfehler, sondern eine Meldung, die
-niemanden erreicht — vor allem beim *Anmelden* eines Zuhörers fällt das kaum auf,
-weil nur eine einzelne Ansicht verstummt.
+niemanden erreicht — vor allem beim *Anmelden* eines Zuhörers fiel das kaum auf,
+weil nur eine einzelne Ansicht verstummte. Jetzt ist es ein Fehler beim
+Übersetzen.
 
-Dazu bekommt die Kennzeichen-Eingabe eine Auswahlliste mit `Fahrzeug`-Objekten
-statt abgetipptem Text. Freie Eingabe bleibt möglich, sonst käme kein neues
-Fahrzeug mehr ins Parkhaus.
+Dazu hat die Kennzeichen-Eingabe eine Auswahlliste mit `Fahrzeug`-Objekten
+bekommen, statt abgetippten Text. Freie Eingabe bleibt möglich, sonst käme kein
+neues Fahrzeug mehr ins Parkhaus.
 
-### v1.2 — Springs eigener Ereignismechanismus
+### v1.2 — Methodenreferenzen und typisierte Nutzdaten *(erledigt)*
 
-`PropertyChangeHandle` weicht dem `ApplicationEventPublisher`. Der Gewinn liegt
-weniger im Austausch des Kanals als in den Nutzdaten: Aus einer `List<Object>`
-mit vier Einträgen in fester Reihenfolge wird ein `record` mit benannten Feldern.
-Damit entfallen der Cast und das `@SuppressWarnings` in der Oberfläche.
+Zwei Schritte, die den Umstieg auf Spring vorbereiten, ohne ihn schon zu
+vollziehen.
 
-Zusätzlich wird `@TransactionalEventListener` interessant: Heute meldet
-`befahren()` die vergebene Position, *bevor* die Transaktion festgeschrieben ist.
-Einsträngig in Swing ist das folgenlos, bei parallelen Zugriffen nicht mehr.
+**Der Verteiler ist verschwunden.** Statt eines `switch` über alle Ereignisnamen
+meldet sich jede Ansicht mit einer Methodenreferenz auf genau den Namen an, der
+sie betrifft. Jedes Ereignis hat damit seine eigene Methode — dieselbe Form, die
+`@EventListener` später erwartet.
+
+**Die Nutzdaten tragen jetzt Namen.** Aus der `List<Object>` mit vier Einträgen
+in fester Reihenfolge wurde `Position(nummernschild, typ, etage, platz)`, aus den
+`String[]`-Paaren `FahrzeugInfo`, aus den rohen Listen `FahrzeugListe` und
+`GarageListe`. Wo vorher `position.get(2)` stand und nur der Sender wusste, dass
+dort die Etage liegt, steht die Bedeutung jetzt im Typ. Drei
+`@SuppressWarnings("unchecked")` sind dadurch entfallen: `(Position)` ist ein
+vollständig prüfbarer Cast, `(List<Fahrzeug>)` war es wegen der Typlöschung nie.
+
+### v1.3 — Springs eigener Ereignismechanismus
+
+`PropertyChangeHandle` weicht dem `ApplicationEventPublisher`. Weil die Nutzdaten
+seit v1.2 Records sind, wird der Typ des Ereignisses zum Verteilungsschlüssel —
+`@EventListener void on(Position p)` findet seinen Aufrufer über die Signatur.
+Damit wird das `Ereignis`-Enum überflüssig, und mit ihm der letzte Rest
+Zeichenkette im Kanal.
+
+Dabei wird `@TransactionalEventListener` interessant: Heute meldet `befahren()`
+die vergebene Position, *bevor* die Transaktion festgeschrieben ist. Einsträngig
+in Swing ist das folgenlos, bei parallelen Zugriffen nicht mehr.
+
+Ein Hindernis ist bekannt: Die Ansichten sind keine Spring-Beans, sie entstehen
+mit `new`. `@EventListener` würde dort nie ausgelöst — zu klären ist, ob sie zu
+Beans werden oder über einen Adapter angemeldet werden.
 
 ### v2.0 — REST-Schnittstelle
 
@@ -183,8 +207,8 @@ Bean Validation an der Grenze. Kommt sie ohne Änderung an der Fachschicht
 obendrauf, ist die Schichtung nicht behauptet, sondern vorgeführt — und der
 Commit-Verlauf zeigt es nach.
 
-Die Reihenfolge ist Absicht: erst die Typisierung, dann der Mechanismus, dann die
-neue Oberfläche. Jeder Schritt macht den nächsten kleiner.
+Die Reihenfolge ist Absicht: erst die Namen, dann die Nutzdaten, dann der
+Mechanismus, dann die neue Oberfläche. Jeder Schritt macht den nächsten kleiner.
 
 ## Bekannte Grenzen
 
