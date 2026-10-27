@@ -2,7 +2,10 @@ package de.yildirim.parkhaus.model.service;
 
 import de.yildirim.parkhaus.model.entity.Garage;
 import de.yildirim.parkhaus.model.entity.Parketage;
+
 import de.yildirim.parkhaus.model.event.Ereignis;
+import de.yildirim.parkhaus.model.event.GarageListe;
+import de.yildirim.parkhaus.model.event.Position;
 import de.yildirim.parkhaus.model.event.PropertyChangeHandle;
 import de.yildirim.parkhaus.model.repository.FahrzeugRepository;
 import de.yildirim.parkhaus.model.repository.GarageRepository;
@@ -11,8 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.IntStream;
@@ -76,13 +77,11 @@ public class GarageService
     public void befahren(String nummernschild, String typ)
     {
         nummernschild = nummernschild.toUpperCase(Locale.ROOT);
-        if(typ == null)
-            pch.propertyChange(Ereignis.TYPANGABE_FEHLT,false);
+        if (typ == null)
+            pch.propertyChange(Ereignis.TYPANGABE_FEHLT, false);
         else if (FahrzeugService.istGueltigesKennzeichen(nummernschild))
         {
-            if (garageRepository.existsByFahrzeug_Nummernschild(nummernschild) ||
-                    (!fahrzeugService.fahrzeugRegistrieren(nummernschild, typ, false) &&
-                            !fahrzeugRepository.existsByNummernschildAndTyp(nummernschild, typ)))
+            if (garageRepository.existsByFahrzeug_Nummernschild(nummernschild) || (!fahrzeugService.fahrzeugRegistrieren(nummernschild, typ, false) && !fahrzeugRepository.existsByNummernschildAndTyp(nummernschild, typ)))
             {
                 pch.propertyChange(Ereignis.ALARM, null);
             }
@@ -105,11 +104,7 @@ public class GarageService
                 // Instanz liefert. Ab Platz 128 wären es zwei Objekte, die gleich sind, aber
                 // nicht dasselbe - bei 260 Plätzen also mitten im Betrieb. Kompiliert sauber,
                 // tut etwas anderes.
-                int i = IntStream.range(0,platzNrListe.size())
-                        .filter(idx -> idx+1!=platzNrListe.get(idx))
-                        .map(idx -> idx+1)
-                        .findFirst()
-                        .orElse(platzNrListe.size()+1);
+                int platzNr = IntStream.range(0, platzNrListe.size()).filter(idx -> idx + 1 != platzNrListe.get(idx)).map(idx -> idx + 1).findFirst().orElse(platzNrListe.size() + 1);
 
 
                 List<Parketage> parketageList = parketageRepository.findAll(Sort.by("etageNr"));
@@ -119,12 +114,12 @@ public class GarageService
                 // Etage, in die i noch passt, ist die gesuchte. Bleibt gefundeneEtage
                 // null, hat keine Etage mehr Platz: Das Parkhaus ist voll. Ändert sich
                 // eine Kapazität, genügt ein UPDATE an den Stammdaten.
-                int j=0;
+                int j = 0;
                 Parketage gefundeneEtage = null;
                 for (Parketage parketage : parketageList)
                 {
                     j = j + parketage.getAnzahlPlaetze();
-                    if (i <= j)
+                    if (platzNr <= j)
                     {
                         gefundeneEtage = parketage;
                         break;
@@ -144,7 +139,7 @@ public class GarageService
                 //                           .findFirst().orElse(-1);
                 //                    Parketage gefundeneEtage =  etageNr == -1 ? null : parketageList.get(etageNr);
 
-                if (gefundeneEtage==null)
+                if (gefundeneEtage == null)
                 {
                     pch.propertyChange(Ereignis.PARKPLATZ_VOLL, null);
                 }
@@ -154,10 +149,11 @@ public class GarageService
                     // nur der Fremdschlüssel gebraucht. Der Platzhalter trägt ihn bereits
                     // in sich, eine SELECT-Abfrage erübrigt sich. Die Etage muss gar nicht
                     // erst nachgeschlagen werden - das Objekt liegt schon vor.
-                    garageRepository.save(new Garage(i, gefundeneEtage, fahrzeugRepository.getReferenceById(nummernschild)));
+                    garageRepository.save(new Garage(platzNr, gefundeneEtage, fahrzeugRepository.getReferenceById(nummernschild)));
 
-                    List<Object> viewInfo = new ArrayList<>(Arrays.asList(typ, nummernschild, gefundeneEtage.getEtageNr(),i));
-                    pch.propertyChange(Ereignis.ZEIGE_POSITION, viewInfo);
+                    Position position = new Position(nummernschild, typ, gefundeneEtage.getEtageNr(), platzNr);
+
+                    pch.propertyChange(Ereignis.ZEIGE_POSITION, position);
                 }
             }
         }
@@ -185,9 +181,9 @@ public class GarageService
     @Transactional
     public void verlassen(String nummernschild, String typ)
     {
-        nummernschild =nummernschild.toUpperCase(Locale.ROOT);
-        if(typ == null)
-            pch.propertyChange(Ereignis.TYPANGABE_FEHLT,false);
+        nummernschild = nummernschild.toUpperCase(Locale.ROOT);
+        if (typ == null)
+            pch.propertyChange(Ereignis.TYPANGABE_FEHLT, false);
         else if (FahrzeugService.istGueltigesKennzeichen(nummernschild))
         {
             if (garageRepository.deleteByFahrzeug_NummernschildAndFahrzeug_Typ(nummernschild, typ) == 1)
@@ -222,7 +218,7 @@ public class GarageService
             if (!garageList.isEmpty())
             {
                 Garage garage = garageList.getFirst();
-                List<Object> position = new ArrayList<>(Arrays.asList(garage.getFahrzeug().getTyp(), nummernschild, garage.getParketage().getEtageNr(), garage.getPlatzNr()));
+                Position position = new Position(nummernschild, garage.getFahrzeug().getTyp(), garage.getParketage().getEtageNr(), garage.getPlatzNr());
                 pch.propertyChange(Ereignis.ZEIGE_POSITION, position);
             }
             else
@@ -245,7 +241,7 @@ public class GarageService
     @Transactional(readOnly = true)
     public void parkplatzTabelle()
     {
-        List<Garage> garageListe = garageRepository.findAll();
+        GarageListe garageListe = new GarageListe(garageRepository.findAll());
 
         pch.propertyChange(Ereignis.PARKPLATZ_TABELLE, garageListe);
         pch.propertyChange(Ereignis.PANEL_TABELLE, null);

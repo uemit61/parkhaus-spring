@@ -3,17 +3,14 @@ package de.yildirim.parkhaus.view;
 import de.yildirim.parkhaus.controller.Controller;
 import de.yildirim.parkhaus.model.entity.Fahrzeug;
 import de.yildirim.parkhaus.model.event.Ereignis;
+import de.yildirim.parkhaus.model.event.FahrzeugListe;
+import de.yildirim.parkhaus.model.event.Position;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
-
-import java.util.List;
-
-import static de.yildirim.parkhaus.model.event.Ereignis.ALARM;
 
 
 /**
@@ -79,12 +76,12 @@ public class ViewParkhaus
 
 	}
 
-	@SuppressWarnings("unchecked")
+
 	private void fahrzeugGeladen(PropertyChangeEvent evt)
 	{
-		List<Fahrzeug> fahrzeugliste = (List<Fahrzeug>) evt.getNewValue();
+		FahrzeugListe fahrzeugliste = (FahrzeugListe) evt.getNewValue();
 		fahrzeugDefaultComboBoxModel.removeAllElements();
-		fahrzeugDefaultComboBoxModel.addAll(fahrzeugliste);
+		fahrzeugDefaultComboBoxModel.addAll(fahrzeugliste.fahrzeugListe());
 	}
 
 	private void panelTabelleFahrzeug(PropertyChangeEvent evt)
@@ -127,7 +124,6 @@ public class ViewParkhaus
 		fahrzeugJComboBox.setSelectedItem(null);
 		boxTyp.setSelectedIndex(0);
 		frame.setContentPane(tempPanel); //wechselt tempPanel =getContentPane entspricht der (hauptpanel)
-
 	}
 
 	private void freiePlaetze(int frei)
@@ -141,12 +137,12 @@ public class ViewParkhaus
 		lblInformation.setText("");
 	}
 
-	@SuppressWarnings("unchecked")
+
 	private void zeigePosition(PropertyChangeEvent evt)
 	{
-		List<Object> position =(List<Object>) evt.getNewValue();
+		Position position =(Position) evt.getNewValue();
 		lblInformation_2.setText("");
-		lblInformation.setText("Der Parkplatz vom " + position.getFirst() + " '" + position.get(1) + "' befindet sich auf der Etage " + position.get(2) + " auf Platz " + position.get(3));
+		lblInformation.setText("Das Fahrzeug "+ position.typ() + " '" + position.nummernschild() + "' befindet sich in der " + position.etage() +". Etage auf Platznummer: " + position.platz());
 	}
 
 	private void parkplatzVerlassen(String nummernschild)

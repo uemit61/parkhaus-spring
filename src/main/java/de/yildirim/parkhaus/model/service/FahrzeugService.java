@@ -2,14 +2,14 @@ package de.yildirim.parkhaus.model.service;
 
 import de.yildirim.parkhaus.model.entity.Fahrzeug;
 import de.yildirim.parkhaus.model.event.Ereignis;
+import de.yildirim.parkhaus.model.event.FahrzeugInfo;
+import de.yildirim.parkhaus.model.event.FahrzeugListe;
 import de.yildirim.parkhaus.model.event.PropertyChangeHandle;
 import de.yildirim.parkhaus.model.repository.FahrzeugRepository;
 import de.yildirim.parkhaus.model.repository.GarageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -74,13 +74,12 @@ public class FahrzeugService
     public boolean fahrzeugRegistrieren(String nummernschild, String typ, boolean admin)
     {
         nummernschild = nummernschild.toUpperCase(Locale.ROOT);
-        String[] props = new String[2];
-        props[0] = nummernschild;
-        props[1] = typ;
+        FahrzeugInfo fahrzeugInfo = new FahrzeugInfo(nummernschild, typ);
+
         boolean retVal = false;
 
-        if(typ == null)
-            pch.propertyChange(Ereignis.TYPANGABE_FEHLT,admin);
+        if (typ == null)
+            pch.propertyChange(Ereignis.TYPANGABE_FEHLT, admin);
         else if (istGueltigesKennzeichen(nummernschild))
         {
 
@@ -94,7 +93,7 @@ public class FahrzeugService
             {
                 fahrzeugRepository.save(new Fahrzeug(nummernschild, typ));
                 if (admin)
-                    pch.propertyChange(Ereignis.REGISTRIERT, props);
+                    pch.propertyChange(Ereignis.REGISTRIERT, fahrzeugInfo);
 
                 retVal = true;
             }
@@ -106,7 +105,6 @@ public class FahrzeugService
     }
 
 
-
     /**
      * Liest alle registrierten Fahrzeuge und schickt sie als Liste an die View, die
      * daraus ihre Tabelle füllt.
@@ -114,10 +112,10 @@ public class FahrzeugService
     public void autoTabelle()
     {
         //Datenbank
-        List<Fahrzeug> liste_Fahrzeug = fahrzeugRepository.findAll();
+        FahrzeugListe fahrzeugliste = new FahrzeugListe(fahrzeugRepository.findAll());
 
         //View
-        pch.propertyChange(Ereignis.FAHRZEUG_TABELLE, liste_Fahrzeug);
+        pch.propertyChange(Ereignis.FAHRZEUG_TABELLE, fahrzeugliste);
 
         pch.propertyChange(Ereignis.PANEL_TABELLE_FAHRZEUG, null);
     }
@@ -139,18 +137,17 @@ public class FahrzeugService
         nummernschild = nummernschild.toUpperCase(Locale.ROOT);
         if (istGueltigesKennzeichen(nummernschild))
         {
-            String[] props = new String[2];
-            props[0] = nummernschild;
-            props[1] = typ;
+            FahrzeugInfo fahrzeugInfo = new FahrzeugInfo(nummernschild, typ);
+
 
             if (!garageRepository.existsByFahrzeug_Nummernschild(nummernschild))
             {
                 if (fahrzeugRepository.deleteByNummernschildAndTyp(nummernschild, typ) != 0)
                 {
-                    pch.propertyChange(Ereignis.FAHRZEUG_GELOESCHT, props);
+                    pch.propertyChange(Ereignis.FAHRZEUG_GELOESCHT, fahrzeugInfo);
                 }
                 else
-                    pch.propertyChange(Ereignis.FAHRZEUG_LOESCHEN_FEHLGESCHLAGEN, props);
+                    pch.propertyChange(Ereignis.FAHRZEUG_LOESCHEN_FEHLGESCHLAGEN, fahrzeugInfo);
             }
             else
                 // Löschenverboten Fahrzeug muss vorher ausgecheckt werden.
@@ -164,9 +161,8 @@ public class FahrzeugService
 
     public void ladeFahrzeuge()
     {
-        List<Fahrzeug> liste_Fahrzeug;
-        liste_Fahrzeug = fahrzeugRepository.findAll();
-        pch.propertyChange(Ereignis.FAHRZEUGE_GELADEN,liste_Fahrzeug);
+        FahrzeugListe fahrzeugliste = new FahrzeugListe(fahrzeugRepository.findAll());
+        pch.propertyChange(Ereignis.FAHRZEUGE_GELADEN, fahrzeugliste);
     }
 
     /**
