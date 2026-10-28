@@ -278,12 +278,13 @@ public class ViewParkhaus
         controller.ladeFahrzeuge();
     }
 
-    //ActionPErformed
-
+    //ActionPErformed.
+    //Die ComboBox in AdministrationsGui hat dasselbe Lambda dem ActionListener übergeben.
     protected static void selectFahrzeug(JComboBox<String> stringJComboBox, JComboBox<Fahrzeug> comboBox)
     {
         Object getSelectedItem = comboBox.getSelectedItem();
-        String selectedItem = getSelectedItem instanceof Fahrzeug f ? f.getTyp() : null;
+        Object settedType = stringJComboBox.getSelectedItem();
+        String selectedItem = getSelectedItem instanceof Fahrzeug f ? f.getTyp() : (String) settedType;
         stringJComboBox.setSelectedItem(selectedItem);
     }
 
