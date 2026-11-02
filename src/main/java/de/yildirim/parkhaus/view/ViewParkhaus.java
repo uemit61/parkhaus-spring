@@ -28,6 +28,7 @@ public class ViewParkhaus
     private AdministrationsGui adminView;
     private JPanel tempPanel;
     private JPanel parkplatzTabelle;
+    private JPanel fahrzeugTabelle;
     private JComboBox<Fahrzeug> fahrzeugJComboBox;
     private JComboBox<String> boxTyp;
     private DefaultComboBoxModel<Fahrzeug> fahrzeugDefaultComboBoxModel;
@@ -89,7 +90,7 @@ public class ViewParkhaus
         frame.setBounds(300, 100, 590, 590);
         lblInformation_2.setText("");
         lblInformation.setText("");
-        frame.setContentPane(parkplatzTabelle);
+        frame.setContentPane(fahrzeugTabelle);
     }
 
     private void zurueckAdminPanel(PropertyChangeEvent propertyChangeEvent)
@@ -272,7 +273,7 @@ public class ViewParkhaus
 
         parkplatzTabelle = new ParkplatzTabelle(controller);
 
-        JPanel fahrzeugTabelle = new FahrzeugTabelle(controller);
+        fahrzeugTabelle = new FahrzeugTabelle(controller);
 
         controller.ermittleFreiePlaetze();
         controller.ladeFahrzeuge();
