@@ -272,7 +272,7 @@ public class ViewParkhaus
 
         parkplatzTabelle = new ParkplatzTabelle(controller);
 
-        JPanel autoTabelle = new AutoTabelle(controller);
+        JPanel fahrzeugTabelle = new FahrzeugTabelle(controller);
 
         controller.ermittleFreiePlaetze();
         controller.ladeFahrzeuge();

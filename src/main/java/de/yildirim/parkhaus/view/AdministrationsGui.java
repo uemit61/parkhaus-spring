@@ -92,11 +92,11 @@ public class AdministrationsGui extends JPanel
         btnZurueck.setBounds(60, 299, 100, 30);
         add(btnZurueck);
 
-        JButton btnAutoTabelle = new JButton("Autotabelle");
-        btnAutoTabelle.addActionListener(this::btnAutoTabelleActionPerformed);
-        btnAutoTabelle.setFont(new Font("Tahoma", Font.BOLD, 12));
-        btnAutoTabelle.setBounds(475, 299, 115, 30);
-        add(btnAutoTabelle);
+        JButton btnFahrzeugTabelle = new JButton("Fahrzeugtabelle");
+        btnFahrzeugTabelle.addActionListener(this::btnFahrzeugTabelleActionPerformed);
+        btnFahrzeugTabelle.setFont(new Font("Tahoma", Font.BOLD, 12));
+        btnFahrzeugTabelle.setBounds(455, 299, 135, 30);
+        add(btnFahrzeugTabelle);
 
         lblInfo = new JLabel("");
         lblInfo.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -128,9 +128,9 @@ public class AdministrationsGui extends JPanel
 
     }
 
-    private void btnAutoTabelleActionPerformed(ActionEvent e)
+    private void btnFahrzeugTabelleActionPerformed(ActionEvent e)
     {
-        controller.autoTabelle();
+        controller.fahrzeugTabelle();
         lblInfo.setText("");
     }
 

@@ -97,9 +97,9 @@ public class Controller
         modelGarage.parkplatzTabelle();
     }
 
-    public void autoTabelle()
+    public void fahrzeugTabelle()
     {
-        fahrzeugService.autoTabelle();
+        fahrzeugService.fahrzeugTabelle();
     }
 
 }

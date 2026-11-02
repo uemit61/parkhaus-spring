@@ -109,7 +109,7 @@ public class FahrzeugService
      * Liest alle registrierten Fahrzeuge und schickt sie als Liste an die View, die
      * daraus ihre Tabelle füllt.
      */
-    public void autoTabelle()
+    public void fahrzeugTabelle()
     {
         //Datenbank
         FahrzeugListe fahrzeugliste = new FahrzeugListe(fahrzeugRepository.findAll());
